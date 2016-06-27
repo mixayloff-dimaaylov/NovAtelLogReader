@@ -71,6 +71,7 @@ namespace NovAtelLogReader
             {
                 lock (_locker)
                 {
+                    Console.WriteLine("Puplishing {0} points starting from {1}", _dataPoints.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPoints[0].Timestamp));
                     _publisher.Publish(_dataPoints);
                     _dataPoints.Clear();
                 }

@@ -37,7 +37,6 @@ namespace NovAtelLogReader
             logRecord.Header.Name = header[0].Remove(0, 1);
             logRecord.Header.Port = header[1];
             logRecord.Header.Timestamp = Util.GpsToUtcTime(Int32.Parse(header[5]), Convert.ToInt64(Double.Parse(header[6], CultureInfo.InvariantCulture) * 1000));
-            Console.WriteLine("{0} {1}", Int32.Parse(header[5]), Double.Parse(header[6], CultureInfo.InvariantCulture));
 
             if (logRecord.Header.Name == "RANGEA")
             {
