@@ -1,0 +1,32 @@
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.Serialization;
+
+namespace NovAtelLogReader
+{
+    [DataContract]
+    [Serializable]
+    public class DataPoint
+    {
+        [DataMember]
+        public long Timestamp { get; set;  }
+        [DataMember]
+        public NavigationSystem NavigationSystem { get; set; }
+        [DataMember]
+        public SignalType SignalType { get; set; }
+        [DataMember]
+        public uint Prn { get; set; }
+        [DataMember]
+        public uint GloFreq { get; set; }
+        [DataMember]
+        public double Psr { get; set; }
+        [DataMember]
+        public double Adr { get; set; }
+        [DataMember]
+        public double CNo { get; set; }
+    }
+}

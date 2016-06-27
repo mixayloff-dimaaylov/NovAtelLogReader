@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NovAtelLogReader.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SerialPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">COM2</Value>
+    </Setting>
+    <Setting Name="PathForReading" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\tersarkisov\Desktop\range.txt</Value>
+    </Setting>
+    <Setting Name="RabbitConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">amqp://admin:210294@172.20.5.27:5672/test</Value>
+    </Setting>
+    <Setting Name="QueueName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw</Value>
+    </Setting>
+    <Setting Name="PublishRate" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="SerialPortSpeed" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">115200</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
