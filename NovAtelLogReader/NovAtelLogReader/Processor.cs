@@ -45,18 +45,27 @@ namespace NovAtelLogReader
         {
             var points = logRecord.Data.Where(data => data is LogDataRange).Select(data =>
             {
-                LogDataRange range = data as LogDataRange;
-                return new DataPoint()
+                var range = data as LogDataRange;
+                var dataPoint = new DataPoint()
                 {
                     Timestamp = logRecord.Header.Timestamp,
                     NavigationSystem = Util.GetNavigationSystem(range.Tracking),
                     SignalType = Util.GetSignalType(range.Tracking),
-                    Prn = Util.GetActualPrn(range.Prn),
-                    GloFreq = Util.GetActualGlonassFrequency(range.GloFreq),
+                    Prn = range.Prn,
+                    GloFreq = range.GloFreq,
                     Adr = range.Adr,
                     Psr = range.Psr,
                     CNo = range.CNo
                 };
+
+                if (dataPoint.NavigationSystem == NavigationSystem.GLONASS)
+                {
+                    dataPoint.Prn = Util.GetActualPrn(dataPoint.Prn);
+                    dataPoint.GloFreq = Util.GetActualGlonassFrequency(dataPoint.GloFreq);
+                }
+
+                dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
+                return dataPoint;
             });
 
             lock (_locker)
@@ -71,9 +80,12 @@ namespace NovAtelLogReader
             {
                 lock (_locker)
                 {
-                    Console.WriteLine("Puplishing {0} points starting from {1}", _dataPoints.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPoints[0].Timestamp));
-                    _publisher.Publish(_dataPoints);
-                    _dataPoints.Clear();
+                    if (_dataPoints.Count > 0)
+                    {
+                        Console.WriteLine("Puplishing {0} points starting from {1}", _dataPoints.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPoints[0].Timestamp));
+                        _publisher.Publish(_dataPoints);
+                        _dataPoints.Clear();
+                    }
                 }
             }
         }

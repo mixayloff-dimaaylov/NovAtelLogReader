@@ -52,8 +52,8 @@ namespace NovAtelLogReader
             _recordFormat = recordFormat;
             _cts = new CancellationTokenSource();
             _serialPort = new SerialPort(Properties.Settings.Default.SerialPort);
-            _serialPort.ReadTimeout = 500;
-            _serialPort.WriteTimeout = 500;
+            _serialPort.ReadTimeout = 1500;
+            _serialPort.WriteTimeout = 1500;
             _serialPort.BaudRate = Properties.Settings.Default.SerialPortSpeed;
             _serialPort.Open();
 
@@ -65,6 +65,8 @@ namespace NovAtelLogReader
         {
             // Инициализация приемника
             _commands.ForEach(_serialPort.WriteLine);
+
+            Thread.Sleep(1000);
             _serialPort.DiscardInBuffer();
             _serialPort.DiscardOutBuffer();
 
@@ -74,10 +76,15 @@ namespace NovAtelLogReader
                 try
                 {
                     var line = _serialPort.ReadLine();
-                    DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(line) });
+
+                    if (!String.IsNullOrEmpty(line))
+                    {
+                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(line) });
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Console.WriteLine(ex);
                 }
             }
         }

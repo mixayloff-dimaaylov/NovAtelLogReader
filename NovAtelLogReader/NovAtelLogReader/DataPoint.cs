@@ -19,6 +19,8 @@ namespace NovAtelLogReader
         [DataMember]
         public SignalType SignalType { get; set; }
         [DataMember]
+        public string Satellite { get; set; }
+        [DataMember]
         public uint Prn { get; set; }
         [DataMember]
         public int GloFreq { get; set; }
