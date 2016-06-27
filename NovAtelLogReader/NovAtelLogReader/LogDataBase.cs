@@ -9,6 +9,6 @@ namespace NovAtelLogReader
     class LogDataBase
     {
         public uint Prn { get; set; }
-        public uint GloFreq { get; set; }
+        public int GloFreq { get; set; }
     }
 }

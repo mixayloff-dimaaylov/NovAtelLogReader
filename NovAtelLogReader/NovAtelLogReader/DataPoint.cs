@@ -21,7 +21,7 @@ namespace NovAtelLogReader
         [DataMember]
         public uint Prn { get; set; }
         [DataMember]
-        public uint GloFreq { get; set; }
+        public int GloFreq { get; set; }
         [DataMember]
         public double Psr { get; set; }
         [DataMember]

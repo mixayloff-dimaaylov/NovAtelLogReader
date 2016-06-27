@@ -52,7 +52,7 @@ namespace NovAtelLogReader
                     logRecord.Data.Add(new LogDataRange()
                     {
                         Prn = UInt32.Parse(body[offset]),
-                        GloFreq = UInt32.Parse(body[offset + 1]),
+                        GloFreq = Int32.Parse(body[offset + 1]),
                         Psr = Double.Parse(body[offset + 2], CultureInfo.InvariantCulture),
                         PsrStd = Double.Parse(body[offset + 3], CultureInfo.InvariantCulture),
                         Adr = Double.Parse(body[offset + 4], CultureInfo.InvariantCulture),
@@ -66,6 +66,33 @@ namespace NovAtelLogReader
                 }
             }
 
+            if(logRecord.Header.Name == "ISMREDOBSA")
+            {
+                long nOfObservations = Int64.Parse(body[0]);
+
+                long offset = 1;
+                long rangeFields = 17;
+                long maxIndex = rangeFields * nOfObservations + offset;
+                while (offset < maxIndex)
+                {
+                    logRecord.Data.Add(new LogDataIsmredobs()
+                    {
+                        Prn = UInt32.Parse(body[offset]),
+                        GloFreq = Int32.Parse(body[offset + 1]),
+                        AverageCmc = Double.Parse(body[offset + 8], CultureInfo.InvariantCulture),
+                        CmcStdDev = Double.Parse(body[offset + 9], CultureInfo.InvariantCulture),
+                        TotalS4 = Double.Parse(body[offset + 10], CultureInfo.InvariantCulture),
+                        CorrS4 = Double.Parse(body[offset + 11], CultureInfo.InvariantCulture),
+                        PhaseSigma1Second = Double.Parse(body[offset + 12], CultureInfo.InvariantCulture),
+                        PhaseSigma30Second = Double.Parse(body[offset + 15], CultureInfo.InvariantCulture),
+                        PhaseSigma60Second = Double.Parse(body[offset + 16], CultureInfo.InvariantCulture)
+                    });
+
+                    offset += rangeFields;
+                }
+
+            }
+      
             return logRecord;
         }
     }

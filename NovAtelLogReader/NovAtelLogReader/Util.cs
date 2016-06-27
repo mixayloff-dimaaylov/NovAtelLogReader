@@ -92,7 +92,7 @@ namespace NovAtelLogReader
         /// </summary>
         /// <param name="freq">Исходный номер частоты</param>
         /// <returns>Скорректированный номер частоты</returns>
-        public static uint GetActualGlonassFrequency(uint freq)
+        public static int GetActualGlonassFrequency(int freq)
         {
             return (freq > 7) ? freq - 7 : freq;
         }
