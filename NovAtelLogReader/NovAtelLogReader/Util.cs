@@ -22,6 +22,20 @@ namespace NovAtelLogReader
         private const uint GLONASS_SIGNAL_L2_CA = 1;
         private const uint GLONASS_SIGNAL_L2_P = 5;
 
+        // Коды типов сигналов GPS для логов ISM*
+        // GPStation-6 User Manual Rev 2, Table 18 (p.61)
+        private const uint ISM_GPS_SIGNAL_L1_CA = 1;
+        private const uint ISM_GPS_SIGNAL_L2_Y = 4;
+        private const uint ISM_GPS_SIGNAL_L2_C = 5;
+        private const uint ISM_GPS_SIGNAL_L2_P = 6;
+        private const uint ISM_GPS_SIGNAL_L5_Q = 7;
+
+        // Коды типов сигналов GLONASS для логов ISM*
+        // GPStation-6 User Manual Rev 2, Table 18 (p.61)
+        private const uint ISM_GLONASS_SIGNAL_L1_CA = 1;
+        private const uint ISM_GLONASS_SIGNAL_L2_CA = 3;
+        private const uint ISM_GLONASS_SIGNAL_L2_P = 4;
+
         /// <summary>
         /// Возвращает тип навигационной системы
         /// </summary>
@@ -38,17 +52,14 @@ namespace NovAtelLogReader
         /// </summary>
         /// <param name="tracking"></param>
         /// <returns></returns>
-        public static SignalType GetSignalType(UInt32 tracking)
+        public static SignalType GetSignalType(NavigationSystem system, uint code)
         {
-            NavigationSystem system = GetNavigationSystem(tracking);
-            uint code = tracking >> 21 & 0x1f;
-
             switch (system)
             {
                 case NavigationSystem.GPS:
                     switch (code)
                     {
-                        case GPS_SIGNAL_L1_CA:
+                        case ISM_GPS_SIGNAL_L1_CA:
                             return SignalType.L1;
                         case GPS_SIGNAL_L2_C:
                         case GPS_SIGNAL_L2_P:
@@ -73,6 +84,52 @@ namespace NovAtelLogReader
                 default:
                     return SignalType.Unknown;
             }
+        }
+
+        public static SignalType GetSignalTypeIsm(NavigationSystem system, uint code)
+        {
+            switch (system)
+            {
+                case NavigationSystem.GPS:
+                    switch (code)
+                    {
+                        case ISM_GPS_SIGNAL_L1_CA:
+                            return SignalType.L1;
+                        case ISM_GPS_SIGNAL_L2_Y:
+                        case ISM_GPS_SIGNAL_L2_C:
+                        case ISM_GPS_SIGNAL_L2_P:
+                            return SignalType.L2;
+                        case ISM_GPS_SIGNAL_L5_Q:
+                            return SignalType.L5;
+                        default:
+                            return SignalType.Unknown;
+                    }
+                case NavigationSystem.GLONASS:
+                    switch (code)
+                    {
+                        case ISM_GLONASS_SIGNAL_L1_CA:
+                            return SignalType.L1;
+                        case ISM_GLONASS_SIGNAL_L2_CA:
+                        case ISM_GLONASS_SIGNAL_L2_P:
+                            return SignalType.L2;
+                        default:
+                            return SignalType.Unknown;
+                    }
+                default:
+                    return SignalType.Unknown;
+            }
+        }
+
+        /// <summary>
+        /// Возвращает тип сигнала навигационной системы
+        /// </summary>
+        /// <param name="tracking"></param>
+        /// <returns></returns>
+        public static SignalType GetSignalType(UInt32 tracking)
+        {
+            NavigationSystem system = GetNavigationSystem(tracking);
+            uint code = tracking >> 21 & 0x1f;
+            return GetSignalType(system, code);
         }
 
         /// <summary>

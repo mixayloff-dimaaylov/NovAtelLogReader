@@ -67,7 +67,6 @@ namespace NovAtelLogReader
                 dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
                 return dataPoint;
             });
-
             lock (_locker)
             {
                 _dataPoints.AddRange(points);
@@ -82,7 +81,7 @@ namespace NovAtelLogReader
                 {
                     if (_dataPoints.Count > 0)
                     {
-                        Console.WriteLine("Puplishing {0} points starting from {1}", _dataPoints.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPoints[0].Timestamp));
+                        Console.WriteLine("Publishing {0} points starting from {1}", _dataPoints.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPoints[0].Timestamp));
                         _publisher.Publish(_dataPoints);
                         _dataPoints.Clear();
                     }

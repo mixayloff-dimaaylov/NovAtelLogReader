@@ -48,6 +48,8 @@ namespace NovAtelLogReader
 
                 while (offset < maxIndex)
                 {
+                    var tracking = Convert.ToUInt32(body[offset + 9], 16);
+
                     logRecord.Data.Add(new LogDataRange()
                     {
                         Prn = UInt32.Parse(body[offset]),
@@ -58,7 +60,9 @@ namespace NovAtelLogReader
                         AdrStd = Double.Parse(body[offset + 5], CultureInfo.InvariantCulture),
                         CNo = Double.Parse(body[offset + 7], CultureInfo.InvariantCulture),
                         LockTime = Double.Parse(body[offset + 8], CultureInfo.InvariantCulture),
-                        Tracking = Convert.ToUInt32(body[offset + 9], 16)
+                        NavigationSystem = Util.GetNavigationSystem(tracking),
+                        SignalType = Util.GetSignalType(tracking),
+                        Tracking = tracking
                     });
 
                     offset += rangeFields;
@@ -72,12 +76,16 @@ namespace NovAtelLogReader
                 long offset = 1;
                 long rangeFields = 17;
                 long maxIndex = rangeFields * nOfObservations + offset;
+
                 while (offset < maxIndex)
                 {
+                    var navigationSystem = (NavigationSystem)UInt32.Parse(body[offset + 2]);
+
                     logRecord.Data.Add(new LogDataIsmredobs()
                     {
                         Prn = UInt32.Parse(body[offset]),
                         GloFreq = Int32.Parse(body[offset + 1]),
+                        SignalType = Util.GetSignalTypeIsm(navigationSystem, UInt32.Parse(body[offset + 3])),
                         AverageCmc = Double.Parse(body[offset + 8], CultureInfo.InvariantCulture),
                         CmcStdDev = Double.Parse(body[offset + 9], CultureInfo.InvariantCulture),
                         TotalS4 = Double.Parse(body[offset + 10], CultureInfo.InvariantCulture),
@@ -91,7 +99,100 @@ namespace NovAtelLogReader
                 }
 
             }
-      
+
+            if(logRecord.Header.Name == "ISMDETOBSA")
+            {
+                var powers = new List<double>();
+                var basePower = ulong.Parse(body[7]);
+                ulong bts;
+
+                powers.Add(basePower);
+                for(int i = 8; i < 57; ++i)
+                {
+                    bts = (Convert.ToUInt32(body[i], 16)) & 0xfff;
+                    if((bts >> 11) != 0)
+                    {
+                        powers.Add(basePower * ((bts & 0x7ff) + 1) / 2048);
+                    }
+                    else
+                    {
+                        powers.Add(basePower * 2048 / ((bts & 0x7ff) + 1));
+                    }
+                }
+
+                var navigationSystem = (NavigationSystem)Enum.Parse(typeof(NavigationSystem), body[0]);
+
+                logRecord.Data.Add(new LogDataIsmdetobs()
+                {
+                    Powers = powers,
+                    Prn = UInt32.Parse(body[2]),
+                    GloFreq = Int32.Parse(body[3]),
+                    NavigationSystem = navigationSystem,
+                    SignalType = Util.GetSignalTypeIsm(navigationSystem, UInt32.Parse(body[4]))
+                });
+
+            }
+
+            if(logRecord.Header.Name == "SATVISA")
+            {
+                long nOfObservations = Int64.Parse(body[1]);
+
+                long offset = 2;
+                long rangeFields = 7;
+                long maxIndex = rangeFields * nOfObservations + offset;
+
+                while (offset < maxIndex)
+                {
+                    logRecord.Data.Add(new LogDataSatvis()
+                    {
+                        SatVis = String.Compare("TRUE", body[0], true) == 0,
+                        Prn = uint.Parse(body[offset]),
+                        GloFreq = int.Parse(body[offset + 1]),
+                        Health = ulong.Parse(body[offset + 2]),
+                        Elev = double.Parse(body[offset + 3], CultureInfo.InvariantCulture),
+                        Az = double.Parse(body[offset + 4], CultureInfo.InvariantCulture)
+                    });
+                    offset += rangeFields;
+                }
+            }
+
+            if(logRecord.Header.Name == "ISMRAWTECA")
+            {
+                long nOfObservations = Int64.Parse(body[0]);
+
+                long offset = 1;
+                long rangeFields = 10;
+                long maxIndex = rangeFields * nOfObservations + offset;
+
+                while(offset < maxIndex)
+                {
+                    var system = (NavigationSystem)UInt32.Parse(body[offset + 2]);
+                    logRecord.Data.Add(new LogDataIsmrawtec()
+                    {
+                        Prn = uint.Parse(body[offset]),
+                        GloFreq = int.Parse(body[offset + 1]),
+                        NavigationSystem = system,
+                        PrimarySignal = Util.GetSignalTypeIsm(system, uint.Parse(body[offset + 3])),
+                        SecondarySignal = Util.GetSignalTypeIsm(system, uint.Parse(body[offset + 4])),
+                        Tec = Double.Parse(body[offset + 8], CultureInfo.InvariantCulture)
+                    });
+                    offset += rangeFields;
+                }
+            }
+
+            if(logRecord.Header.Name == "PSRPOSA")
+            {
+                logRecord.Data.Add(new LogDataPsrpos()
+                {
+                    Lat = Double.Parse(body[2], CultureInfo.InvariantCulture),
+                    Lon = Double.Parse(body[3], CultureInfo.InvariantCulture),
+                    Hgt = Double.Parse(body[4], CultureInfo.InvariantCulture),
+                    LatStdDev = Double.Parse(body[7], CultureInfo.InvariantCulture),
+                    LonStdDev = Double.Parse(body[8], CultureInfo.InvariantCulture),
+                    HgtStdDev = Double.Parse(body[9], CultureInfo.InvariantCulture)
+                });
+            }
+
             return logRecord;
         }
     }

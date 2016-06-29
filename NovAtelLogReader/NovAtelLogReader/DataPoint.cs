@@ -30,5 +30,7 @@ namespace NovAtelLogReader
         public double Adr { get; set; }
         [DataMember]
         public double CNo { get; set; }
+        [DataMember]
+        public double Power { get; set; }
     }
 }

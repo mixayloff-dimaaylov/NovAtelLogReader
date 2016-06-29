@@ -61,7 +61,11 @@
     <Compile Include="ComPortReader.cs" />
     <Compile Include="DataPoint.cs" />
     <Compile Include="ILogRecordFormat.cs" />
+    <Compile Include="LogDataIsmdetobs.cs" />
+    <Compile Include="LogDataIsmrawtec.cs" />
     <Compile Include="LogDataIsmredobs.cs" />
+    <Compile Include="LogDataPsrpos.cs" />
+    <Compile Include="LogDataSatvis.cs" />
     <Compile Include="Processor.cs" />
     <Compile Include="RabbitMQPublisher.cs" />
     <Compile Include="TextFileReader.cs" />
