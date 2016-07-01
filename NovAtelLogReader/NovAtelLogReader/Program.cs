@@ -10,18 +10,38 @@ using System.IO;
 using System.Globalization;
 
 using Microsoft.Hadoop.Avro;
+using NLog;
+using NovAtelLogReader.Readers;
+using NovAtelLogReader.LogRecordFormats;
 
 namespace NovAtelLogReader
 {
     class Program
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
-            var _processor = new Processor(new ComPortReader(), new RabbitMQPublisher(), new AsciiLogRecordFormat());
-            _processor.Start();
+            var _processor = new Processor(new TextFileReader(), new RabbitMQPublisher(), new AsciiLogRecordFormat());
+
+            try
+            {
+                _logger.Info("Запуск программы.");
+                _processor.Start();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+            }
             Console.WriteLine("Working...");
             Console.ReadLine();
-            _processor.Stop();
+            try
+            {
+                _processor.Stop();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+            }
         }
         
     }

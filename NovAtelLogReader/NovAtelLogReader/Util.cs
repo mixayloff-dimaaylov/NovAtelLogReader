@@ -151,7 +151,22 @@ namespace NovAtelLogReader
         /// <returns>Скорректированный номер частоты</returns>
         public static int GetActualGlonassFrequency(int freq)
         {
-            return (freq > 7) ? freq - 7 : freq;
+            return freq - 7;
+        }
+
+        public static NavigationSystem GetNavigationSystemByPrn(uint prn)
+        {
+            if (1 <= prn && prn <= 32)
+            {
+                return NavigationSystem.GPS;
+            }
+
+            if (38 <= prn && prn <= 61)
+            {
+                return NavigationSystem.GLONASS;
+            }
+
+            return NavigationSystem.Other;
         }
 
         public static long GpsToUtcTime(int gpsWeek, long ms)

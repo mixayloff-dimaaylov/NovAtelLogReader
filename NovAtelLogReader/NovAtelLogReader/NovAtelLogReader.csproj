@@ -42,6 +42,10 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.5\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="RabbitMQ.Client, Version=3.6.2.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <HintPath>..\packages\RabbitMQ.Client.3.6.2\lib\net45\RabbitMQ.Client.dll</HintPath>
       <Private>True</Private>
@@ -57,22 +61,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsciiLogRecordFormat.cs" />
-    <Compile Include="ComPortReader.cs" />
-    <Compile Include="DataPoint.cs" />
+    <Compile Include="DataPoints\DataPointIsmrawtec.cs" />
+    <Compile Include="DataPoints\DataPointIsmredobs.cs" />
+    <Compile Include="DataPoints\DataPointPsrpos.cs" />
+    <Compile Include="DataPoints\DataPointSatvis.cs" />
+    <Compile Include="LogRecordFormats\AsciiLogRecordFormat.cs" />
+    <Compile Include="Readers\ComPortReader.cs" />
+    <Compile Include="DataPoints\DataPointRange.cs" />
     <Compile Include="ILogRecordFormat.cs" />
-    <Compile Include="LogDataIsmdetobs.cs" />
-    <Compile Include="LogDataIsmrawtec.cs" />
-    <Compile Include="LogDataIsmredobs.cs" />
-    <Compile Include="LogDataPsrpos.cs" />
-    <Compile Include="LogDataSatvis.cs" />
+    <Compile Include="LogData\LogDataIsmdetobs.cs" />
+    <Compile Include="LogData\LogDataIsmrawtec.cs" />
+    <Compile Include="LogData\LogDataIsmredobs.cs" />
+    <Compile Include="LogData\LogDataPsrpos.cs" />
+    <Compile Include="LogData\LogDataSatvis.cs" />
     <Compile Include="Processor.cs" />
     <Compile Include="RabbitMQPublisher.cs" />
-    <Compile Include="TextFileReader.cs" />
+    <Compile Include="Readers\TextFileReader.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="IReader.cs" />
-    <Compile Include="LogDataBase.cs" />
-    <Compile Include="LogDataRange.cs" />
+    <Compile Include="LogData\LogDataBase.cs" />
+    <Compile Include="LogData\LogDataRange.cs" />
     <Compile Include="LogHeader.cs" />
     <Compile Include="LogRecord.cs" />
     <Compile Include="NavigationSystem.cs" />
@@ -89,11 +97,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

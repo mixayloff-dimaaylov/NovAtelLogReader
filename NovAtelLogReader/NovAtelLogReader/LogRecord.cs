@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NovAtelLogReader.LogData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,5 @@ namespace NovAtelLogReader
         public LogHeader Header { get; set; }
         public List<LogDataBase> Data { get; set; }
         public UInt32 Checksum { get; set; }
-        
     }
 }

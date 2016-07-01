@@ -4,13 +4,15 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NovAtelLogReader.LogData;
+using NLog;
 
-namespace NovAtelLogReader
+namespace NovAtelLogReader.LogRecordFormats
 {
     class AsciiLogRecordFormat : ILogRecordFormat
     {
+        private Logger _logger = LogManager.GetCurrentClassLogger();
         public LogRecord Parse(byte[] data)
-
         {
             return Parse(Encoding.ASCII.GetString(data));
         }
@@ -21,6 +23,7 @@ namespace NovAtelLogReader
 
             if (parts.Length != 3 && !parts[0].StartsWith("#"))
             {
+                _logger.Error("Неверный формат лога");
                 throw new InvalidOperationException("Wrong log line format");
             }
 
@@ -61,37 +64,7 @@ namespace NovAtelLogReader
                 default:
                     break;
             }
-
-            if (logRecord.Header.Name == "RANGEA")
-            {
-                ParseRange(body, logRecord);
-            }
-
-            if (logRecord.Header.Name == "ISMREDOBSA")
-            {
-                ParseIsmredobs(body, logRecord);
-            }
-
-            if (logRecord.Header.Name == "ISMDETOBSA")
-            {
-                ParseIsmdetobs(body, logRecord);
-            }
-
-            if (logRecord.Header.Name == "SATVISA")
-            {
-                ParseSatvis(body, logRecord);
-            }
-
-            if (logRecord.Header.Name == "ISMRAWTECA")
-            {
-                ParseIsmrawtec(body, logRecord);
-            }
-
-            if (logRecord.Header.Name == "PSRPOSA")
-            {
-                ParsePsrpos(body, logRecord);
-            }
-
+            
             return logRecord;
         }
 
@@ -119,7 +92,7 @@ namespace NovAtelLogReader
             while (offset < maxIndex)
             {
                 var system = (NavigationSystem)UInt32.Parse(body[offset + 2]);
-                logRecord.Data.Add(new LogDataIsmrawtec()
+                LogDataIsmrawtec logDataIsmrawtec = new LogDataIsmrawtec()
                 {
                     Prn = uint.Parse(body[offset]),
                     GloFreq = int.Parse(body[offset + 1]),
@@ -127,7 +100,9 @@ namespace NovAtelLogReader
                     PrimarySignal = Util.GetSignalTypeIsm(system, uint.Parse(body[offset + 3])),
                     SecondarySignal = Util.GetSignalTypeIsm(system, uint.Parse(body[offset + 4])),
                     Tec = Double.Parse(body[offset + 8], CultureInfo.InvariantCulture)
-                });
+                };
+                
+                logRecord.Data.Add(logDataIsmrawtec);
                 offset += rangeFields;
             }
         }
@@ -142,7 +117,7 @@ namespace NovAtelLogReader
 
             while (offset < maxIndex)
             {
-                logRecord.Data.Add(new LogDataSatvis()
+                LogDataSatvis logDataSatvis = new LogDataSatvis()
                 {
                     SatVis = String.Compare("TRUE", body[0], true) == 0,
                     Prn = uint.Parse(body[offset]),
@@ -150,7 +125,17 @@ namespace NovAtelLogReader
                     Health = ulong.Parse(body[offset + 2]),
                     Elev = double.Parse(body[offset + 3], CultureInfo.InvariantCulture),
                     Az = double.Parse(body[offset + 4], CultureInfo.InvariantCulture)
-                });
+                };
+
+                logDataSatvis.NavigationSystem = Util.GetNavigationSystemByPrn(logDataSatvis.Prn);
+
+                if(logDataSatvis.NavigationSystem == NavigationSystem.GLONASS)
+                {
+                    logDataSatvis.Prn = Util.GetActualPrn(logDataSatvis.Prn);
+                    logDataSatvis.GloFreq = Util.GetActualGlonassFrequency(logDataSatvis.GloFreq);
+                }
+
+                logRecord.Data.Add(logDataSatvis);
                 offset += rangeFields;
             }
         }
@@ -176,15 +161,16 @@ namespace NovAtelLogReader
             }
 
             var navigationSystem = (NavigationSystem)Enum.Parse(typeof(NavigationSystem), body[0]);
-
-            logRecord.Data.Add(new LogDataIsmdetobs()
+            LogDataIsmdetobs logDataIsmdetobs = new LogDataIsmdetobs()
             {
                 Powers = powers,
                 Prn = UInt32.Parse(body[2]),
                 GloFreq = Int32.Parse(body[3]),
                 NavigationSystem = navigationSystem,
                 SignalType = Util.GetSignalTypeIsm(navigationSystem, UInt32.Parse(body[4]))
-            });
+            };
+
+            logRecord.Data.Add(logDataIsmdetobs);
         }
 
         private static void ParseIsmredobs(string[] body, LogRecord logRecord)
@@ -201,6 +187,7 @@ namespace NovAtelLogReader
 
                 logRecord.Data.Add(new LogDataIsmredobs()
                 {
+                    NavigationSystem = navigationSystem,
                     Prn = UInt32.Parse(body[offset]),
                     GloFreq = Int32.Parse(body[offset + 1]),
                     SignalType = Util.GetSignalTypeIsm(navigationSystem, UInt32.Parse(body[offset + 3])),
@@ -229,7 +216,7 @@ namespace NovAtelLogReader
             {
                 var tracking = Convert.ToUInt32(body[offset + 9], 16);
 
-                logRecord.Data.Add(new LogDataRange()
+                LogDataRange logDataRange = new LogDataRange()
                 {
                     Prn = UInt32.Parse(body[offset]),
                     GloFreq = Int32.Parse(body[offset + 1]),
@@ -242,7 +229,15 @@ namespace NovAtelLogReader
                     NavigationSystem = Util.GetNavigationSystem(tracking),
                     SignalType = Util.GetSignalType(tracking),
                     Tracking = tracking
-                });
+                };
+
+                if (logDataRange.NavigationSystem == NavigationSystem.GLONASS)
+                {
+                    logDataRange.Prn = Util.GetActualPrn(logDataRange.Prn);
+                    logDataRange.GloFreq = Util.GetActualGlonassFrequency(logDataRange.GloFreq);
+                }
+
+                logRecord.Data.Add(logDataRange);
 
                 offset += rangeFields;
             }

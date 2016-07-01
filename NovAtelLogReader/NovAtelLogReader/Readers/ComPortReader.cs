@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NovAtelLogReader
+namespace NovAtelLogReader.Readers
 {
     class ComPortReader : IReader
     {
@@ -14,6 +15,7 @@ namespace NovAtelLogReader
         private SerialPort _serialPort;
         private CancellationTokenSource _cts;
         ILogRecordFormat _recordFormat;
+        private Logger _logger = LogManager.GetCurrentClassLogger();
         List<string> _commands = new List<string>()
         {
             "unlog all",
@@ -41,6 +43,7 @@ namespace NovAtelLogReader
 
         public void Close()
         {
+            _logger.Info("Закрытие COM-порта");
             _cts.Cancel();
             _cts.Dispose();
             _serialPort.Close();
@@ -49,9 +52,11 @@ namespace NovAtelLogReader
 
         public void Open(ILogRecordFormat recordFormat)
         {
+            var portName = Properties.Settings.Default.SerialPort;
+            _logger.Info("Открытие COM-порта {0}", portName);
             _recordFormat = recordFormat;
             _cts = new CancellationTokenSource();
-            _serialPort = new SerialPort(Properties.Settings.Default.SerialPort);
+            _serialPort = new SerialPort(portName);
             _serialPort.ReadTimeout = 1500;
             _serialPort.WriteTimeout = 1500;
             _serialPort.BaudRate = Properties.Settings.Default.SerialPortSpeed;
@@ -63,6 +68,7 @@ namespace NovAtelLogReader
 
         public void Read()
         {
+            _logger.Info("Инициализация приемника");
             // Инициализация приемника
             _commands.ForEach(_serialPort.WriteLine);
 
@@ -84,7 +90,7 @@ namespace NovAtelLogReader
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    _logger.Error(ex);
                 }
             }
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NovAtelLogReader
+namespace NovAtelLogReader.LogData
 {
     class LogDataIsmdetobs : LogDataBase
     {

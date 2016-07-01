@@ -1,23 +1,22 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
 
-namespace NovAtelLogReader
+namespace NovAtelLogReader.DataPoints
 {
     [DataContract]
     [Serializable]
-    public class DataPoint
+    public class DataPointIsmrawtec
     {
         [DataMember]
-        public long Timestamp { get; set;  }
+        public long Timestamp { get; set; }
         [DataMember]
         public NavigationSystem NavigationSystem { get; set; }
-        [DataMember]
-        public SignalType SignalType { get; set; }
+        //[DataMember]
+        //public SignalType SignalType { get; set; }
         [DataMember]
         public string Satellite { get; set; }
         [DataMember]
@@ -25,12 +24,10 @@ namespace NovAtelLogReader
         [DataMember]
         public int GloFreq { get; set; }
         [DataMember]
-        public double Psr { get; set; }
+        public SignalType PrimarySignal { get; set; }
         [DataMember]
-        public double Adr { get; set; }
+        public SignalType SecondarySignal { get; set; }
         [DataMember]
-        public double CNo { get; set; }
-        [DataMember]
-        public double Power { get; set; }
+        public double Tec { get; set; }
     }
 }
