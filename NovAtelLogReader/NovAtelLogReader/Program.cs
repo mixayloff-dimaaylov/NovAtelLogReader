@@ -22,7 +22,6 @@ namespace NovAtelLogReader
         static void Main(string[] args)
         {
             var _processor = new Processor(new TextFileReader(), new RabbitMQPublisher(), new AsciiLogRecordFormat());
-
             try
             {
                 _logger.Info("Запуск программы.");

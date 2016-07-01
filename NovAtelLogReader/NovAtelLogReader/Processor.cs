@@ -39,7 +39,7 @@ namespace NovAtelLogReader
 
         public void Start()
         {
-            _logger.Info("Запуск процессора сообщений");
+            _logger.Info("Запуск процессора сообщений.");
             _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(Properties.Settings.Default.PublishRate));
             _publisher.Open();
             _reader.Open(_logRecordFormat);
@@ -48,7 +48,7 @@ namespace NovAtelLogReader
 
         public void Stop()
         {
-            _logger.Info("Закрытие процессора сообщений");
+            _logger.Info("Закрытие процессора сообщений.");
             _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
             _timer.Dispose();
             _reader.Close();

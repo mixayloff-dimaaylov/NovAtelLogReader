@@ -22,14 +22,14 @@ namespace NovAtelLogReader
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public void Close()
         {
-            _logger.Info("Закрытие RabbitMQ publisher");
+            _logger.Info("Закрытие RabbitMQ publisher.");
             channel.Close();
             connection.Close();
         }
 
         public void Open()
         {
-            _logger.Info("Открытие RabbitMQ publisher");
+            _logger.Info("Открытие RabbitMQ publisher.");
             var connectionString = Properties.Settings.Default.RabbitConnectionString;
             try
             {
@@ -49,7 +49,7 @@ namespace NovAtelLogReader
 
         public void Publish(List<DataPointRange> dataPoints)
         {
-            _logger.Info("Отправка данных в очередь");
+            _logger.Info("Отправка данных в очередь.");
             using (var buffer = new MemoryStream())
             {
                 avroSerializerRange.Serialize(buffer, dataPoints);

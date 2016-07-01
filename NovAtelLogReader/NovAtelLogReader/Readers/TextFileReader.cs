@@ -20,7 +20,7 @@ namespace NovAtelLogReader.Readers
 
         public void Close()
         {
-            _logger.Info("Закрытие файла");
+            _logger.Info("Закрытие файла.");
 
             _cts.Cancel();
             _cts.Dispose();
@@ -44,7 +44,7 @@ namespace NovAtelLogReader.Readers
 
                 Task.Run(() =>
                 {
-                    _logger.Info("Запуск потока чтения файла");
+                    _logger.Info("Запуск потока чтения файла.");
 
                     string line;
                     while ((line = _file.ReadLine()) != null)
