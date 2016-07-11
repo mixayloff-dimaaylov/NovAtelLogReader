@@ -49,7 +49,7 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("amqp://admin:210294@172.20.5.27:5672/test")]
+        [global::System.Configuration.DefaultSettingValueAttribute("amqp://uniframe:uniframe@172.20.5.28:5672/")]
         public string RabbitConnectionString {
             get {
                 return ((string)(this["RabbitConnectionString"]));

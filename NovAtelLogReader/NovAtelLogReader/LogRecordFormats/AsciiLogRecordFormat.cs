@@ -109,9 +109,9 @@ namespace NovAtelLogReader.LogRecordFormats
 
         private static void ParseSatvis(string[] body, LogRecord logRecord)
         {
-            long nOfObservations = Int64.Parse(body[1]);
+            long nOfObservations = Int64.Parse(body[2]);
 
-            long offset = 2;
+            long offset = 3;
             long rangeFields = 7;
             long maxIndex = rangeFields * nOfObservations + offset;
 
