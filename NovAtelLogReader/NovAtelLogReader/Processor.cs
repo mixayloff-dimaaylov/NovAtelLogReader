@@ -43,7 +43,7 @@ namespace NovAtelLogReader
             _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(Properties.Settings.Default.PublishRate));
             _publisher.Open();
             _reader.Open(_logRecordFormat);
-            _reader.DataReceived += (s, e) => ProcessLogRecord(e.LogRecord);
+            _reader.DataReceived += (s, e) => Task.Run(() => ProcessLogRecord(e.LogRecord));
         }
 
         public void Stop()

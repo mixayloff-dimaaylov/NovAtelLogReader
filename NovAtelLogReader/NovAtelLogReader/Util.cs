@@ -59,7 +59,7 @@ namespace NovAtelLogReader
                 case NavigationSystem.GPS:
                     switch (code)
                     {
-                        case ISM_GPS_SIGNAL_L1_CA:
+                        case GPS_SIGNAL_L1_CA:
                             return SignalType.L1;
                         case GPS_SIGNAL_L2_C:
                         case GPS_SIGNAL_L2_P:

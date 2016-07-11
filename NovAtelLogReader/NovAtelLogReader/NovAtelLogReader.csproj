@@ -66,6 +66,7 @@
     <Compile Include="DataPoints\DataPointPsrpos.cs" />
     <Compile Include="DataPoints\DataPointSatvis.cs" />
     <Compile Include="LogRecordFormats\AsciiLogRecordFormat.cs" />
+    <Compile Include="LogRecordFormats\BinaryLogRecordFormat.cs" />
     <Compile Include="Readers\ComPortReader.cs" />
     <Compile Include="DataPoints\DataPointRange.cs" />
     <Compile Include="ILogRecordFormat.cs" />

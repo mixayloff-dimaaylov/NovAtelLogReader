@@ -49,7 +49,8 @@ namespace NovAtelLogReader
 
         public void Publish(List<DataPointRange> dataPoints)
         {
-            _logger.Info("Отправка данных в очередь.");
+            Console.WriteLine("Отправка {0} точек", dataPoints.Count);
+            _logger.Info("Отправка данных в очередь");
             using (var buffer = new MemoryStream())
             {
                 avroSerializerRange.Serialize(buffer, dataPoints);

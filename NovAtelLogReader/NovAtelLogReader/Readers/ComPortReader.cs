@@ -1,6 +1,7 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -16,9 +17,10 @@ namespace NovAtelLogReader.Readers
         private CancellationTokenSource _cts;
         ILogRecordFormat _recordFormat;
         private Logger _logger = LogManager.GetCurrentClassLogger();
+
         List<string> _commands = new List<string>()
         {
-            "unlog all",
+            "unlogall true",
             "CNOUPDATE 20HZ",
             "DIFFCODEBIASCONTROL DISABLE",
             "EXTERNALCLOCK DISABLE",
@@ -33,12 +35,12 @@ namespace NovAtelLogReader.Readers
             //"log psrposa ontime 1",
             //"log psrxyza ontime 1",
             //"log satxyz2a ontime 1",
-            "log rangea ontime 0.02",
+            "log rangeb ontime 0.02",
             //"log ismrawobsa onnew",
             //"log ismrawteca onnew",
             //"log satvis2a ontime 10",
             //"log ismdetobsa onnew",
-            //"LOG ISMREDOBSa ONNEW"
+            //"LOG ISMREDOBSA ONNEW"
         };
 
         public void Close()
@@ -52,9 +54,16 @@ namespace NovAtelLogReader.Readers
 
         public void Open(ILogRecordFormat recordFormat)
         {
+            _recordFormat = recordFormat;
+
+            InitReceiver();
+            Task.Run(() => Read(), _cts.Token);
+        }
+
+        private void InitReceiver()
+        {
             var portName = Properties.Settings.Default.SerialPort;
             _logger.Info("Открытие COM-порта {0}", portName);
-            _recordFormat = recordFormat;
             _cts = new CancellationTokenSource();
             _serialPort = new SerialPort(portName);
             _serialPort.ReadTimeout = 1500;
@@ -62,31 +71,50 @@ namespace NovAtelLogReader.Readers
             _serialPort.BaudRate = Properties.Settings.Default.SerialPortSpeed;
             _serialPort.Open();
 
-            Task.Run(() => Read(), _cts.Token);
-
+            _logger.Info("Инициализация приемника");
+            _commands.ForEach(_serialPort.WriteLine);
+            Thread.Sleep(1500);
+            _serialPort.DiscardInBuffer();
+            _serialPort.DiscardOutBuffer();
         }
 
         public void Read()
         {
-            _logger.Info("Инициализация приемника");
-            // Инициализация приемника
-            _commands.ForEach(_serialPort.WriteLine);
-
-            Thread.Sleep(1000);
-            _serialPort.DiscardInBuffer();
-            _serialPort.DiscardOutBuffer();
-
             // Чтение строк
             while (!_cts.IsCancellationRequested)
             {
                 try
                 {
-                    var line = _serialPort.ReadLine();
+                    string line = String.Empty;
 
-                    if (!String.IsNullOrEmpty(line))
+                    _serialPort.ReadTo(Encoding.ASCII.GetString(new byte[] { 0xaa, 0x44, 0x12 }));
+                    var headerLen = (byte) _serialPort.ReadByte();
+                    
+                    byte[] message = new byte[4096];
+                    
+                    if (headerLen == 28)
                     {
-                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(line) });
+                        _serialPort.Read(message, 4, headerLen - 4);
+                        var dataLen = BitConverter.ToUInt16(message, 8);
+                        _serialPort.Read(message, headerLen, dataLen);
+                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(message) });
                     }
+
+                    //try
+                    //{
+                    //    line = _serialPort.ReadLine();
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    Close();
+                    //    Thread.Sleep(100);
+                    //    InitReceiver();
+                    //}
+
+                    //if (!String.IsNullOrEmpty(line))
+                    //{
+                    //    DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(line) });
+                    //}
                 }
                 catch (Exception ex)
                 {
