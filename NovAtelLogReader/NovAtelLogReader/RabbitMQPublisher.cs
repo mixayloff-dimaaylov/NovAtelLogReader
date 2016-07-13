@@ -17,8 +17,10 @@ namespace NovAtelLogReader
         private ConnectionFactory factory;
         private IConnection connection;
         private IModel channel;
-        private string queueName;
+        private string queueNameRange;
+        private string queueNameSatvis;
         private IAvroSerializer<List<DataPointRange>> avroSerializerRange;
+        private IAvroSerializer<List<DataPointSatvis>> avroSerializerSatvis;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public void Close()
         {
@@ -37,9 +39,12 @@ namespace NovAtelLogReader
                 factory.Uri = connectionString;
                 connection = factory.CreateConnection();
                 channel = connection.CreateModel();
-                queueName = Properties.Settings.Default.QueueName;
-                channel.QueueDeclare(queueName, true, false, false, null);
+                queueNameRange = Properties.Settings.Default.QueueNameRange;
+                queueNameSatvis = Properties.Settings.Default.QueueNameSatvis;
+                channel.QueueDeclare(queueNameRange, true, false, false, null);
+                channel.QueueDeclare(queueNameSatvis, true, false, false, null);
                 avroSerializerRange = AvroSerializer.Create<List<DataPointRange>>();
+                avroSerializerSatvis = AvroSerializer.Create<List<DataPointSatvis>>();
             }
             catch(Exception ex)
             {
@@ -47,14 +52,24 @@ namespace NovAtelLogReader
             }
         }
 
-        public void Publish(List<DataPointRange> dataPoints)
+        public void PublishRange(List<DataPointRange> dataPoints)
         {
             Console.WriteLine("Отправка {0} точек", dataPoints.Count);
             _logger.Info("Отправка данных в очередь");
             using (var buffer = new MemoryStream())
             {
                 avroSerializerRange.Serialize(buffer, dataPoints);
-                channel.BasicPublish(String.Empty, queueName, null, buffer.ToArray());
+                channel.BasicPublish(String.Empty, queueNameRange, null, buffer.ToArray());
+            }
+        }
+        public void PublishSatvis(List<DataPointSatvis> dataPoints)
+        {
+            Console.WriteLine("Отправка {0} точек", dataPoints.Count);
+            _logger.Info("Отправка данных в очередь");
+            using (var buffer = new MemoryStream())
+            {
+                avroSerializerSatvis.Serialize(buffer, dataPoints);
+                channel.BasicPublish(String.Empty, queueNameSatvis, null, buffer.ToArray());
             }
         }
     }

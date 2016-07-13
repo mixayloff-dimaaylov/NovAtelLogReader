@@ -11,14 +11,17 @@
     <Setting Name="RabbitConnectionString" Type="System.String" Scope="User">
       <Value Profile="(Default)">amqp://uniframe:uniframe@172.20.5.28:5672/</Value>
     </Setting>
-    <Setting Name="QueueName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">datapoint-raw</Value>
+    <Setting Name="QueueNameRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-range</Value>
     </Setting>
     <Setting Name="PublishRate" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="SerialPortSpeed" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">115200</Value>
+    </Setting>
+    <Setting Name="QueueNameSatvis" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-satvis</Value>
     </Setting>
   </Settings>
 </SettingsFile>

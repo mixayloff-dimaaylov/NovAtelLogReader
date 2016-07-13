@@ -61,13 +61,13 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("datapoint-raw")]
-        public string QueueName {
+        [global::System.Configuration.DefaultSettingValueAttribute("datapoint-raw-range")]
+        public string QueueNameRange {
             get {
-                return ((string)(this["QueueName"]));
+                return ((string)(this["QueueNameRange"]));
             }
             set {
-                this["QueueName"] = value;
+                this["QueueNameRange"] = value;
             }
         }
         
@@ -92,6 +92,18 @@ namespace NovAtelLogReader.Properties {
             }
             set {
                 this["SerialPortSpeed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("datapoint-raw-satvis")]
+        public string QueueNameSatvis {
+            get {
+                return ((string)(this["QueueNameSatvis"]));
+            }
+            set {
+                this["QueueNameSatvis"] = value;
             }
         }
     }
