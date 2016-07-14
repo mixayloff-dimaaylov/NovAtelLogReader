@@ -39,7 +39,7 @@ namespace NovAtelLogReader.LogRecordFormats
                     ParseIsmdetobs(data, logRecord);
                     break;
                 default:
-                    throw new InvalidOperationException("Unsupported log");
+                    throw new InvalidOperationException("Unsupported log" + messageId.ToString());
             }
             return logRecord;
         }

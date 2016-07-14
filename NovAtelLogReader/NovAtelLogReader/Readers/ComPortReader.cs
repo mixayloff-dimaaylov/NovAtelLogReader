@@ -32,13 +32,13 @@ namespace NovAtelLogReader.Readers
             "SETIONOTYPE L1L2",
             "ismbandwidth 1.0 0.0",
             "ismsignalcontrol GPSL2P enable enable",
-            //"log psrposa ontime 1",
+            "log psrposb ontime 1",
             //"log psrxyza ontime 1",
             //"log satxyz2a ontime 1",
             "log rangeb ontime 0.02",
             //"log ismrawobsa onnew",
             //"log ismrawteca onnew",
-            //"log satvis2a ontime 10",
+            "log satvisb ontime 10",
             //"log ismdetobsa onnew",
             //"LOG ISMREDOBSA ONNEW"
         };

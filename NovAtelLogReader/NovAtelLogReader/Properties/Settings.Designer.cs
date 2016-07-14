@@ -106,5 +106,17 @@ namespace NovAtelLogReader.Properties {
                 this["QueueNameSatvis"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("datapoint-raw-psrpos")]
+        public string QueueNamePsrpos {
+            get {
+                return ((string)(this["QueueNamePsrpos"]));
+            }
+            set {
+                this["QueueNamePsrpos"] = value;
+            }
+        }
     }
 }

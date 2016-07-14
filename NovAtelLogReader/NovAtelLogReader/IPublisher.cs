@@ -13,5 +13,6 @@ namespace NovAtelLogReader
         void Close();
         void PublishRange(List<DataPointRange> dataPoints);
         void PublishSatvis(List<DataPointSatvis> dataPoints);
+        void PublishPsrpos(List<DataPointPsrpos> dataPoints);
     }
 }

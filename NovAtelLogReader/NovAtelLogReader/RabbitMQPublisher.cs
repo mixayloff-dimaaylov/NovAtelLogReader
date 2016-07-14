@@ -19,8 +19,10 @@ namespace NovAtelLogReader
         private IModel channel;
         private string queueNameRange;
         private string queueNameSatvis;
+        private string queueNamePsrpos;
         private IAvroSerializer<List<DataPointRange>> avroSerializerRange;
         private IAvroSerializer<List<DataPointSatvis>> avroSerializerSatvis;
+        private IAvroSerializer<List<DataPointPsrpos>> avroSerializerPsrpos;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public void Close()
         {
@@ -41,10 +43,13 @@ namespace NovAtelLogReader
                 channel = connection.CreateModel();
                 queueNameRange = Properties.Settings.Default.QueueNameRange;
                 queueNameSatvis = Properties.Settings.Default.QueueNameSatvis;
+                queueNamePsrpos = Properties.Settings.Default.QueueNamePsrpos;
                 channel.QueueDeclare(queueNameRange, true, false, false, null);
                 channel.QueueDeclare(queueNameSatvis, true, false, false, null);
+                channel.QueueDeclare(queueNamePsrpos, true, false, false, null);
                 avroSerializerRange = AvroSerializer.Create<List<DataPointRange>>();
                 avroSerializerSatvis = AvroSerializer.Create<List<DataPointSatvis>>();
+                avroSerializerPsrpos = AvroSerializer.Create<List<DataPointPsrpos>>();
             }
             catch(Exception ex)
             {
@@ -70,6 +75,16 @@ namespace NovAtelLogReader
             {
                 avroSerializerSatvis.Serialize(buffer, dataPoints);
                 channel.BasicPublish(String.Empty, queueNameSatvis, null, buffer.ToArray());
+            }
+        }
+        public void PublishPsrpos(List<DataPointPsrpos> dataPoints)
+        {
+            Console.WriteLine("Отправка {0} точек", dataPoints.Count);
+            _logger.Info("Отправка данных в очередь");
+            using (var buffer = new MemoryStream())
+            {
+                avroSerializerPsrpos.Serialize(buffer, dataPoints);
+                channel.BasicPublish(String.Empty, queueNamePsrpos, null, buffer.ToArray());
             }
         }
     }

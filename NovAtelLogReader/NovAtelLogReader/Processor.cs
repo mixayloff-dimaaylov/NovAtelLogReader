@@ -196,9 +196,22 @@ namespace NovAtelLogReader
                     if (_dataPointsSatvis.Count > 0)
                     {
                         _logger.Info("Отправка {0} точек по логу SATVIS", _dataPointsSatvis.Count);
-                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsRange.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsRange[0].Timestamp));
+                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsSatvis.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsSatvis[0].Timestamp));
                         _publisher.PublishSatvis(_dataPointsSatvis);
                         _dataPointsSatvis.Clear();
+                    }
+                }
+            }
+            if (_dataPointsPsrpos.Count > 0)
+            {
+                lock (_locker)
+                {
+                    if (_dataPointsPsrpos.Count > 0)
+                    {
+                        _logger.Info("Отправка {0} точек по логу PSRPOS", _dataPointsPsrpos.Count);
+                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsPsrpos.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsPsrpos[0].Timestamp));
+                        _publisher.PublishPsrpos(_dataPointsPsrpos);
+                        _dataPointsPsrpos.Clear();
                     }
                 }
             }

@@ -23,5 +23,8 @@
     <Setting Name="QueueNameSatvis" Type="System.String" Scope="User">
       <Value Profile="(Default)">datapoint-raw-satvis</Value>
     </Setting>
+    <Setting Name="QueueNamePsrpos" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-psrpos</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
