@@ -61,6 +61,9 @@ namespace NovAtelLogReader.LogRecordFormats
                 case ("PSRPOSA"):
                     ParsePsrpos(body, logRecord);
                     break;
+                case ("SATXYZ2A"):
+                    ParseSatxyz2(body, logRecord);
+                    break;
                 default:
                     break;
             }
@@ -80,7 +83,10 @@ namespace NovAtelLogReader.LogRecordFormats
                 HgtStdDev = Double.Parse(body[9], CultureInfo.InvariantCulture)
             });
         }
+        private static void ParseSatxyz2(string[] body, LogRecord logRecord)
+        {
 
+        }
         private static void ParseIsmrawtec(string[] body, LogRecord logRecord)
         {
             long nOfObservations = Int64.Parse(body[0]);

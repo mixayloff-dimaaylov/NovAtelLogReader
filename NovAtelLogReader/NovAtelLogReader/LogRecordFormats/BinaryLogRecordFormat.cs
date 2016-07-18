@@ -1,4 +1,5 @@
-﻿using NovAtelLogReader.LogData;
+﻿using NLog;
+using NovAtelLogReader.LogData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace NovAtelLogReader.LogRecordFormats
 {
     class BinaryLogRecordFormat : ILogRecordFormat
     {
+        private Logger _logger = LogManager.GetCurrentClassLogger();
         private static readonly int HeaderLength = 28;
 
         public LogRecord Parse(byte[] data)
@@ -18,31 +20,46 @@ namespace NovAtelLogReader.LogRecordFormats
             logRecord.Header = new LogHeader();
             logRecord.Data = new List<LogDataBase>();
             logRecord.Header.Timestamp = Util.GpsToUtcTime(BitConverter.ToUInt16(data, 14), BitConverter.ToUInt32(data, 16));
+
+            _logger.Info("Новое сообщение {0} @ {1}", messageId, logRecord.Header.Timestamp);
+
             switch (messageId)
             {
                 case 43:
+                    _logger.Info("Обработка Range");
                     ParseRange(data, logRecord);
                     break;
                 case 47:
+                    _logger.Info("Обработка Psrpos");
                     ParsePsrpos(data, logRecord);
                     break;
                 case 48:
+                    _logger.Info("Обработка Satvis");
                     ParseSatvis(data, logRecord);
                     break;
                 case 1393:
+                    _logger.Info("Обработка Ismredobs");
                     ParseIsmredobs(data, logRecord);
                     break;
                 case 1390:
+                    _logger.Info("Обработка Ismrawtec");
                     ParseIsmrawtec(data, logRecord);
                     break;
                 case 1395:
+                    _logger.Info("Обработка Ismdetobs");
                     ParseIsmdetobs(data, logRecord);
+                    break;
+                case 1451:
+                    _logger.Info("Обработка Satxyz2");
+                    ParseSatxyz2(data, logRecord);
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported log" + messageId.ToString());
             }
             return logRecord;
         }
+
+       
 
         private void ParseRange(byte[] data, LogRecord logRecord)
         {
@@ -56,7 +73,7 @@ namespace NovAtelLogReader.LogRecordFormats
 
                 LogDataRange logDataRange = new LogDataRange()
                 {
-                    Prn = BitConverter.ToUInt32(data, offset + 4),
+                    Prn = BitConverter.ToUInt16(data, offset + 4),
                     GloFreq = BitConverter.ToInt16(data, offset + 6),
                     Psr = BitConverter.ToDouble(data, offset + 8),
                     PsrStd = BitConverter.ToSingle(data, offset + 16),
@@ -79,6 +96,27 @@ namespace NovAtelLogReader.LogRecordFormats
             }
         }
 
+        private void ParseSatxyz2(byte[] data, LogRecord logRecord)
+        {
+            logRecord.Header.Name = "SATXYZ2";
+            var nOfObservations = BitConverter.ToUInt32(data, HeaderLength);
+            _logger.Info("Количество измерений Satxyz2: {0}", nOfObservations);
+
+            for (int idx = 0; idx < nOfObservations; idx++)
+            {
+                var offset = HeaderLength + idx * 72;
+                LogDataSatxyz2 logDataSatxyz2 = new LogDataSatxyz2()
+                {
+                    NavigationSystem = (NavigationSystem)BitConverter.ToUInt32(data, offset + 4),
+                    Prn = BitConverter.ToUInt16(data, offset + 8),
+                    X = BitConverter.ToDouble(data, offset + 12),
+                    Y = BitConverter.ToDouble(data, offset + 20),
+                    Z = BitConverter.ToDouble(data, offset + 28)
+                };
+                _logger.Info("Получена точка для лога Satxyz2 с системой {0}, Prn = {1}", logDataSatxyz2.NavigationSystem, logDataSatxyz2.Prn);
+                logRecord.Data.Add(logDataSatxyz2);
+            }
+        }
         private void ParseSatvis(byte[] data, LogRecord logRecord)
         {
             logRecord.Header.Name = "SATVIS";

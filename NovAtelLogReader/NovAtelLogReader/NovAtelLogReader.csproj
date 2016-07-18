@@ -65,6 +65,8 @@
     <Compile Include="DataPoints\DataPointIsmredobs.cs" />
     <Compile Include="DataPoints\DataPointPsrpos.cs" />
     <Compile Include="DataPoints\DataPointSatvis.cs" />
+    <Compile Include="DataPoints\DataPointSatxyz2.cs" />
+    <Compile Include="LogData\LogDataSatxyz2.cs" />
     <Compile Include="LogRecordFormats\AsciiLogRecordFormat.cs" />
     <Compile Include="LogRecordFormats\BinaryLogRecordFormat.cs" />
     <Compile Include="Readers\ComPortReader.cs" />

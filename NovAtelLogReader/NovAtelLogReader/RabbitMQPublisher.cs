@@ -20,9 +20,11 @@ namespace NovAtelLogReader
         private string queueNameRange;
         private string queueNameSatvis;
         private string queueNamePsrpos;
+        private string queueNameSatxyz2;
         private IAvroSerializer<List<DataPointRange>> avroSerializerRange;
         private IAvroSerializer<List<DataPointSatvis>> avroSerializerSatvis;
         private IAvroSerializer<List<DataPointPsrpos>> avroSerializerPsrpos;
+        private IAvroSerializer<List<DataPointSatxyz2>> avroSerializerSatxyz2;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public void Close()
         {
@@ -44,12 +46,15 @@ namespace NovAtelLogReader
                 queueNameRange = Properties.Settings.Default.QueueNameRange;
                 queueNameSatvis = Properties.Settings.Default.QueueNameSatvis;
                 queueNamePsrpos = Properties.Settings.Default.QueueNamePsrpos;
+                queueNameSatxyz2 = Properties.Settings.Default.QueueNameSatxyz2;
                 channel.QueueDeclare(queueNameRange, true, false, false, null);
                 channel.QueueDeclare(queueNameSatvis, true, false, false, null);
                 channel.QueueDeclare(queueNamePsrpos, true, false, false, null);
+                channel.QueueDeclare(queueNameSatxyz2, true, false, false, null);
                 avroSerializerRange = AvroSerializer.Create<List<DataPointRange>>();
                 avroSerializerSatvis = AvroSerializer.Create<List<DataPointSatvis>>();
                 avroSerializerPsrpos = AvroSerializer.Create<List<DataPointPsrpos>>();
+                avroSerializerSatxyz2 = AvroSerializer.Create<List<DataPointSatxyz2>>();
             }
             catch(Exception ex)
             {
@@ -85,6 +90,16 @@ namespace NovAtelLogReader
             {
                 avroSerializerPsrpos.Serialize(buffer, dataPoints);
                 channel.BasicPublish(String.Empty, queueNamePsrpos, null, buffer.ToArray());
+            }
+        }
+        public void PublishSatxyz2(List<DataPointSatxyz2> dataPoints)
+        {
+            Console.WriteLine("Отправка {0} точек", dataPoints.Count);
+            _logger.Info("Отправка данных в очередь");
+            using (var buffer = new MemoryStream())
+            {
+                avroSerializerSatxyz2.Serialize(buffer, dataPoints);
+                channel.BasicPublish(String.Empty, queueNameSatxyz2, null, buffer.ToArray());
             }
         }
     }

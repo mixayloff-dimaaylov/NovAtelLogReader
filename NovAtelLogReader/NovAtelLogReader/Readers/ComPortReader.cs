@@ -35,12 +35,13 @@ namespace NovAtelLogReader.Readers
             "log psrposb ontime 1",
             //"log psrxyza ontime 1",
             //"log satxyz2a ontime 1",
-            "log rangeb ontime 0.02",
+            //"log rangeb ontime 0.02",
             //"log ismrawobsa onnew",
             //"log ismrawteca onnew",
             "log satvisb ontime 10",
             //"log ismdetobsa onnew",
             //"LOG ISMREDOBSA ONNEW"
+            "log satxyz2b ontime 10"
         };
 
         public void Close()

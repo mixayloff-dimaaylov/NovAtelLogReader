@@ -26,5 +26,8 @@
     <Setting Name="QueueNamePsrpos" Type="System.String" Scope="User">
       <Value Profile="(Default)">datapoint-raw-psrpos</Value>
     </Setting>
+    <Setting Name="QueueNameSatxyz2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-satxyz2</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

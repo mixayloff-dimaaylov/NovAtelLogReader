@@ -20,6 +20,7 @@ namespace NovAtelLogReader
         private List<DataPointPsrpos> _dataPointsPsrpos;
         private List<DataPointIsmrawtec> _dataPointsIsmrawtec;
         private List<DataPointIsmredobs> _dataPointsIsmredobs;
+        private List<DataPointSatxyz2> _dataPointsSatxyz2;
         private Timer _timer;
         private readonly object _locker = new object();
         private Logger _logger = LogManager.GetCurrentClassLogger();
@@ -31,6 +32,7 @@ namespace NovAtelLogReader
             _dataPointsPsrpos = new List<DataPointPsrpos>();
             _dataPointsIsmrawtec = new List<DataPointIsmrawtec>();
             _dataPointsIsmredobs = new List<DataPointIsmredobs>();
+            _dataPointsSatxyz2 = new List<DataPointSatxyz2>();
             _publisher = publisher;
             _reader = reader;
             _logRecordFormat = logRecordFormat;
@@ -172,6 +174,26 @@ namespace NovAtelLogReader
             {
                 _dataPointsIsmrawtec.AddRange(pointsIsmrawtec);
             }
+            //------
+            var pointsSatxyz2 = logRecord.Data.Where(data => data is LogDataSatxyz2).Select(data =>
+            {
+                var satxyz2 = data as LogDataSatxyz2;
+                var dataPoint = new DataPointSatxyz2()
+                {
+                    Timestamp = logRecord.Header.Timestamp,
+                    NavigationSystem = satxyz2.NavigationSystem,
+                    Prn = satxyz2.Prn,
+                    X = satxyz2.X,
+                    Y = satxyz2.Y,
+                    Z = satxyz2.Z
+                };
+                dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
+                return dataPoint;
+            });
+            lock (_locker)
+            {
+                _dataPointsSatxyz2.AddRange(pointsSatxyz2);
+            }
         }
 
         private void PublishDataPoints()
@@ -212,6 +234,19 @@ namespace NovAtelLogReader
                         //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsPsrpos.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsPsrpos[0].Timestamp));
                         _publisher.PublishPsrpos(_dataPointsPsrpos);
                         _dataPointsPsrpos.Clear();
+                    }
+                }
+            }
+            if(_dataPointsSatxyz2.Count > 0)
+            {
+                lock(_locker)
+                {
+                    if(_dataPointsSatxyz2.Count > 0)
+                    {
+                        _logger.Info("Отправка {0} точек по логу SATXYZ2", _dataPointsSatxyz2.Count);
+                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsSatxyz2.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsPsrpos[0].Timestamp));
+                        _publisher.PublishSatxyz2(_dataPointsSatxyz2);
+                        _dataPointsSatxyz2.Clear();
                     }
                 }
             }
