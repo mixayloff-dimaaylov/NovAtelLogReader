@@ -15,8 +15,6 @@ namespace NovAtelLogReader.DataPoints
         public long Timestamp { get; set; }
         [DataMember]
         public NavigationSystem NavigationSystem { get; set; }
-        //[DataMember]
-        //public SignalType SignalType { get; set; }
         [DataMember]
         public string Satellite { get; set; }
         [DataMember]

@@ -9,7 +9,7 @@ namespace NovAtelLogReader.DataPoints
 {
     [DataContract]
     [Serializable]
-    public class DataPointSatvis
+    public class DataPointIsmdetobs
     {
         [DataMember]
         public long Timestamp { get; set; }
@@ -22,12 +22,10 @@ namespace NovAtelLogReader.DataPoints
         [DataMember]
         public int GloFreq { get; set; }
         [DataMember]
-        public bool SatVis { get; set; }
+        public SignalType PrimarySignal { get; set; }
         [DataMember]
-        public ulong Health { get; set; }
+        public SignalType SecondarySignal { get; set; }
         [DataMember]
-        public double Elev { get; set; }
-        [DataMember]
-        public double Az { get; set; }
+        public double Tec { get; set; }
     }
 }

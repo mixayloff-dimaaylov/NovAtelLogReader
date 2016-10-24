@@ -6,7 +6,7 @@
       <Value Profile="(Default)">COM2</Value>
     </Setting>
     <Setting Name="PathForReading" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\tersarkisov\Desktop\range.txt</Value>
+      <Value Profile="(Default)">C:\Users\savartsov\Source\range.txt</Value>
     </Setting>
     <Setting Name="RabbitConnectionString" Type="System.String" Scope="User">
       <Value Profile="(Default)">amqp://uniframe:uniframe@172.20.5.28:5672/</Value>
@@ -28,6 +28,12 @@
     </Setting>
     <Setting Name="QueueNameSatxyz2" Type="System.String" Scope="User">
       <Value Profile="(Default)">datapoint-raw-satxyz2</Value>
+    </Setting>
+    <Setting Name="QueueNameIsmredobs" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-ismredobs</Value>
+    </Setting>
+    <Setting Name="QueueNameIsmrawtec" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-ismrawtec</Value>
     </Setting>
   </Settings>
 </SettingsFile>

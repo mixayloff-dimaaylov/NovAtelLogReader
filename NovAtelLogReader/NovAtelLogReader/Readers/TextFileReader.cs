@@ -49,7 +49,9 @@ namespace NovAtelLogReader.Readers
                     string line;
                     while ((line = _file.ReadLine()) != null)
                     {
-                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(line) });
+                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord =  _recordFormat.Parse(line) });
+                            Thread.Sleep(18);
+                        
                     }
                 }, _cts.Token);
             }

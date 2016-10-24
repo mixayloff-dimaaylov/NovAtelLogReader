@@ -15,5 +15,7 @@ namespace NovAtelLogReader
         void PublishSatvis(List<DataPointSatvis> dataPoints);
         void PublishPsrpos(List<DataPointPsrpos> dataPoints);
         void PublishSatxyz2(List<DataPointSatxyz2> dataPoints);
+        void PublishIsmredobs(List<DataPointIsmredobs> dataPoints);
+        void PublishIsmrawtec(List<DataPointIsmrawtec> dataPoints);
     }
 }

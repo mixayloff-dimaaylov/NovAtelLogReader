@@ -77,10 +77,13 @@ namespace NovAtelLogReader
                 dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
                 return dataPoint;
             });
+
             lock (_locker)
             {
-                _dataPointsRange.AddRange(pointsRange);
+               // _publisher.PublishRange(pointsRange.ToList());
+               _dataPointsRange.AddRange(pointsRange);
             }
+            
             //------
             var pointsSatvis = logRecord.Data.Where(data => data is LogDataSatvis).Select(data =>
             {
@@ -100,10 +103,13 @@ namespace NovAtelLogReader
                 dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
                 return dataPoint;
             });
+
             lock (_locker)
             {
+                //_publisher.PublishSatvis(pointsSatvis.ToList());
                 _dataPointsSatvis.AddRange(pointsSatvis);
             }
+
             //------
             var pointsPsrpos = logRecord.Data.Where(data => data is LogDataPsrpos).Select(data =>
             {
@@ -121,10 +127,13 @@ namespace NovAtelLogReader
                 
                 return dataPoint;
             });
+
             lock (_locker)
             {
+                // _publisher.PublishPsrpos(pointsPsrpos.ToList());
                 _dataPointsPsrpos.AddRange(pointsPsrpos);
             }
+
             //------
             var pointsIsmredobs = logRecord.Data.Where(data => data is LogDataIsmredobs).Select(data =>
             {
@@ -148,10 +157,12 @@ namespace NovAtelLogReader
                 dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
                 return dataPoint;
             });
+
             lock (_locker)
             {
                 _dataPointsIsmredobs.AddRange(pointsIsmredobs);
             }
+
             //------
             var pointsIsmrawtec = logRecord.Data.Where(data => data is LogDataIsmrawtec).Select(data =>
             {
@@ -170,10 +181,12 @@ namespace NovAtelLogReader
                 dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
                 return dataPoint;
             });
+
             lock (_locker)
             {
                 _dataPointsIsmrawtec.AddRange(pointsIsmrawtec);
             }
+
             //------
             var pointsSatxyz2 = logRecord.Data.Where(data => data is LogDataSatxyz2).Select(data =>
             {
@@ -190,8 +203,10 @@ namespace NovAtelLogReader
                 dataPoint.Satellite = String.Format("{0}{1}", dataPoint.NavigationSystem, dataPoint.Prn);
                 return dataPoint;
             });
+
             lock (_locker)
             {
+                // _publisher.PublishSatxyz2(pointsSatxyz2.ToList());
                 _dataPointsSatxyz2.AddRange(pointsSatxyz2);
             }
         }
@@ -205,7 +220,6 @@ namespace NovAtelLogReader
                     if (_dataPointsRange.Count > 0)
                     {
                         _logger.Info("Отправка {0} точек по логу RANGE", _dataPointsRange.Count);
-                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsRange.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsRange[0].Timestamp));
                         _publisher.PublishRange(_dataPointsRange);
                         _dataPointsRange.Clear();
                     }
@@ -218,7 +232,6 @@ namespace NovAtelLogReader
                     if (_dataPointsSatvis.Count > 0)
                     {
                         _logger.Info("Отправка {0} точек по логу SATVIS", _dataPointsSatvis.Count);
-                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsSatvis.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsSatvis[0].Timestamp));
                         _publisher.PublishSatvis(_dataPointsSatvis);
                         _dataPointsSatvis.Clear();
                     }
@@ -231,7 +244,6 @@ namespace NovAtelLogReader
                     if (_dataPointsPsrpos.Count > 0)
                     {
                         _logger.Info("Отправка {0} точек по логу PSRPOS", _dataPointsPsrpos.Count);
-                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsPsrpos.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsPsrpos[0].Timestamp));
                         _publisher.PublishPsrpos(_dataPointsPsrpos);
                         _dataPointsPsrpos.Clear();
                     }
@@ -244,9 +256,32 @@ namespace NovAtelLogReader
                     if(_dataPointsSatxyz2.Count > 0)
                     {
                         _logger.Info("Отправка {0} точек по логу SATXYZ2", _dataPointsSatxyz2.Count);
-                        //Console.WriteLine("Publishing {0} points starting from {1}", _dataPointsSatxyz2.Count, DateTimeOffset.FromUnixTimeMilliseconds(_dataPointsPsrpos[0].Timestamp));
                         _publisher.PublishSatxyz2(_dataPointsSatxyz2);
                         _dataPointsSatxyz2.Clear();
+                    }
+                }
+            }
+            if (_dataPointsIsmredobs.Count > 0)
+            {
+                lock (_locker)
+                {
+                    if (_dataPointsIsmredobs.Count > 0)
+                    {
+                        _logger.Info("Отправка {0} точек по логу ISMREDOBS", _dataPointsIsmredobs.Count);
+                        _publisher.PublishIsmredobs(_dataPointsIsmredobs);
+                        _dataPointsIsmredobs.Clear();
+                    }
+                }
+            }
+            if (_dataPointsIsmrawtec.Count > 0)
+            {
+                lock (_locker)
+                {
+                    if (_dataPointsIsmrawtec.Count > 0)
+                    {
+                        _logger.Info("Отправка {0} точек по логу ISMRAWTEC", _dataPointsIsmrawtec.Count);
+                        _publisher.PublishIsmrawtec(_dataPointsIsmrawtec);
+                        _dataPointsIsmrawtec.Clear();
                     }
                 }
             }

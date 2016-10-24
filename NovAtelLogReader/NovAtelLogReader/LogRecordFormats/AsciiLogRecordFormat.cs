@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using NovAtelLogReader.LogData;
 using NLog;
+using System.Threading;
 
 namespace NovAtelLogReader.LogRecordFormats
 {
     class AsciiLogRecordFormat : ILogRecordFormat
     {
+        private long ms =  new DateTimeOffset(DateTime.Now).ToLocalTime().ToUnixTimeMilliseconds();
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public LogRecord Parse(byte[] data)
         {
@@ -39,8 +41,9 @@ namespace NovAtelLogReader.LogRecordFormats
 
             logRecord.Header.Name = header[0].Remove(0, 1);
             logRecord.Header.Port = header[1];
-            logRecord.Header.Timestamp = Util.GpsToUtcTime(Int32.Parse(header[5]), Convert.ToInt64(Double.Parse(header[6], CultureInfo.InvariantCulture) * 1000));
-
+            logRecord.Header.Timestamp = ms; //Util.GpsToUtcTime(Int32.Parse(header[5]), Convert.ToInt64(Double.Parse(header[6], CultureInfo.InvariantCulture) * 1000));
+            ms += 20;
+            
             switch (logRecord.Header.Name)
             {
                 case ("RANGEA"):

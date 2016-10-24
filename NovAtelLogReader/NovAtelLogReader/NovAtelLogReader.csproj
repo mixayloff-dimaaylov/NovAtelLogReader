@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataPoints\DataPointIsmdetobs.cs" />
     <Compile Include="DataPoints\DataPointIsmrawtec.cs" />
     <Compile Include="DataPoints\DataPointIsmredobs.cs" />
     <Compile Include="DataPoints\DataPointPsrpos.cs" />
