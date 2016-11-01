@@ -23,12 +23,14 @@ namespace NovAtelLogReader
         private string queueNameSatxyz2;
         private string queueNameIsmredobs;
         private string queueNameIsmrawtec;
+        private string queueNameIsmdetobs;
         private IAvroSerializer<List<DataPointRange>> avroSerializerRange;
         private IAvroSerializer<List<DataPointSatvis>> avroSerializerSatvis;
         private IAvroSerializer<List<DataPointPsrpos>> avroSerializerPsrpos;
         private IAvroSerializer<List<DataPointSatxyz2>> avroSerializerSatxyz2;
         private IAvroSerializer<List<DataPointIsmredobs>> avroSerializerIsmredobs;
         private IAvroSerializer<List<DataPointIsmrawtec>> avroSerializerIsmrawtec;
+        private IAvroSerializer<List<DataPointIsmdetobs>> avroSerializerIsmdetobs;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public void Close()
         {
@@ -53,18 +55,21 @@ namespace NovAtelLogReader
                 queueNameSatxyz2 = Properties.Settings.Default.QueueNameSatxyz2;
                 queueNameIsmredobs = Properties.Settings.Default.QueueNameIsmredobs;
                 queueNameIsmrawtec = Properties.Settings.Default.QueueNameIsmrawtec;
+                queueNameIsmdetobs = Properties.Settings.Default.QueueNameIsmdetobs;
                 channel.QueueDeclare(queueNameRange, true, false, false, null);
                 channel.QueueDeclare(queueNameSatvis, true, false, false, null);
                 channel.QueueDeclare(queueNamePsrpos, true, false, false, null);
                 channel.QueueDeclare(queueNameSatxyz2, true, false, false, null);
                 channel.QueueDeclare(queueNameIsmredobs, true, false, false, null);
                 channel.QueueDeclare(queueNameIsmrawtec, true, false, false, null);
+                channel.QueueDeclare(queueNameIsmdetobs, true, false, false, null);
                 avroSerializerRange = AvroSerializer.Create<List<DataPointRange>>();
                 avroSerializerSatvis = AvroSerializer.Create<List<DataPointSatvis>>();
                 avroSerializerPsrpos = AvroSerializer.Create<List<DataPointPsrpos>>();
                 avroSerializerSatxyz2 = AvroSerializer.Create<List<DataPointSatxyz2>>();
                 avroSerializerIsmredobs = AvroSerializer.Create<List<DataPointIsmredobs>>();
                 avroSerializerIsmrawtec = AvroSerializer.Create<List<DataPointIsmrawtec>>();
+                avroSerializerIsmdetobs = AvroSerializer.Create<List<DataPointIsmdetobs>>();
             }
             catch(Exception ex)
             {
@@ -130,6 +135,16 @@ namespace NovAtelLogReader
             {
                 avroSerializerIsmrawtec.Serialize(buffer, dataPoints);
                 channel.BasicPublish(String.Empty, queueNameIsmrawtec, null, buffer.ToArray());
+            }
+        }
+        public void PublishIsmdeoobs(List<DataPointIsmdetobs> dataPoints)
+        {
+            Console.WriteLine("Отправка {0} точек", dataPoints.Count);
+            _logger.Info("Отправка данных в очередь");
+            using (var buffer = new MemoryStream())
+            {
+                avroSerializerIsmdetobs.Serialize(buffer, dataPoints);
+                channel.BasicPublish(String.Empty, queueNameIsmdetobs, null, buffer.ToArray());
             }
         }
     }

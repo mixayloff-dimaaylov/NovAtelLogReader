@@ -20,6 +20,7 @@ namespace NovAtelLogReader
         private List<DataPointPsrpos> _dataPointsPsrpos;
         private List<DataPointIsmrawtec> _dataPointsIsmrawtec;
         private List<DataPointIsmredobs> _dataPointsIsmredobs;
+        private List<DataPointIsmdetobs> _dataPointsIsmdetobs;
         private List<DataPointSatxyz2> _dataPointsSatxyz2;
         private Timer _timer;
         private readonly object _locker = new object();
@@ -32,6 +33,7 @@ namespace NovAtelLogReader
             _dataPointsPsrpos = new List<DataPointPsrpos>();
             _dataPointsIsmrawtec = new List<DataPointIsmrawtec>();
             _dataPointsIsmredobs = new List<DataPointIsmredobs>();
+            _dataPointsIsmdetobs = new List<DataPointIsmdetobs>();
             _dataPointsSatxyz2 = new List<DataPointSatxyz2>();
             _publisher = publisher;
             _reader = reader;
@@ -55,6 +57,28 @@ namespace NovAtelLogReader
             _timer.Dispose();
             _reader.Close();
             _publisher.Close();
+        }
+
+        private IEnumerable<DataPointIsmdetobs> GetIsmdetDataPoints(LogHeader logHeader, LogDataBase data)
+        {
+            var ismdet = data as LogDataIsmdetobs;
+            var timestamp = logHeader.Timestamp;
+
+            foreach (var power in ismdet.Powers)
+            {
+                yield return new DataPointIsmdetobs()
+                {
+                    Timestamp = timestamp,
+                    Satellite = String.Format("{0}{1}", ismdet.NavigationSystem, ismdet.Prn),
+                    NavigationSystem = ismdet.NavigationSystem,
+                    GloFreq = ismdet.GloFreq,
+                    Prn = ismdet.Prn,
+                    SignalType = ismdet.SignalType,
+                    Power = power
+                };
+
+                timestamp += 50;
+            }
         }
 
         private void ProcessLogRecord(LogRecord logRecord)
@@ -187,6 +211,15 @@ namespace NovAtelLogReader
                 _dataPointsIsmrawtec.AddRange(pointsIsmrawtec);
             }
 
+            // -----
+
+            var pointIsmdetobs = logRecord.Data.Where(data => data is LogDataIsmdetobs).SelectMany(data => GetIsmdetDataPoints(logRecord.Header, data));
+
+            lock (_locker)
+            {
+                _dataPointsIsmdetobs.AddRange(pointIsmdetobs);
+            }
+
             //------
             var pointsSatxyz2 = logRecord.Data.Where(data => data is LogDataSatxyz2).Select(data =>
             {
@@ -282,6 +315,18 @@ namespace NovAtelLogReader
                         _logger.Info("Отправка {0} точек по логу ISMRAWTEC", _dataPointsIsmrawtec.Count);
                         _publisher.PublishIsmrawtec(_dataPointsIsmrawtec);
                         _dataPointsIsmrawtec.Clear();
+                    }
+                }
+            }
+            if (_dataPointsIsmdetobs.Count > 0)
+            {
+                lock (_locker)
+                {
+                    if (_dataPointsIsmdetobs.Count > 0)
+                    {
+                        _logger.Info("Отправка {0} точек по логу ISMDETOBS", _dataPointsIsmdetobs.Count);
+                        _publisher.PublishIsmdetobs(_dataPointsIsmdetobs);
+                        _dataPointsIsmdetobs.Clear();
                     }
                 }
             }

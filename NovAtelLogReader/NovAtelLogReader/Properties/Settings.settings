@@ -35,5 +35,8 @@
     <Setting Name="QueueNameIsmrawtec" Type="System.String" Scope="User">
       <Value Profile="(Default)">datapoint-raw-ismrawtec</Value>
     </Setting>
+    <Setting Name="QueueNameIsmdetobs" Type="System.String" Scope="User">
+      <Value Profile="(Default)">datapoint-raw-ismdetobs</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

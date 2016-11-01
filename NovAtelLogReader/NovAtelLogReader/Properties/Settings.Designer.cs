@@ -154,5 +154,17 @@ namespace NovAtelLogReader.Properties {
                 this["QueueNameIsmrawtec"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("datapoint-raw-ismdetobs")]
+        public string QueueNameIsmdetobs {
+            get {
+                return ((string)(this["QueueNameIsmdetobs"]));
+            }
+            set {
+                this["QueueNameIsmdetobs"] = value;
+            }
+        }
     }
 }
