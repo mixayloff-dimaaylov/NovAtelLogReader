@@ -216,14 +216,14 @@ namespace NovAtelLogReader.LogRecordFormats
             powers.Add(basePower);
             for (int i = 0; i < 49; ++i)
             {
-                bts = BitConverter.ToUInt32(data, HeaderLength + 24 + 4 * i) & 0xfff;
+                bts = (BitConverter.ToUInt32(data, HeaderLength + 24 + 4 * i) >> 20) & 0xfff;
                 if ((bts >> 11) != 0)
                 {
-                    powers.Add(basePower * ((bts & 0x7ff) + 1) / 2048);
+                    powers.Add((double)basePower * (double)((bts & 0x7ff) + 1) / 2048.0);
                 }
                 else
                 {
-                    powers.Add(basePower * 2048 / ((bts & 0x7ff) + 1));
+                    powers.Add((double)basePower * 2048.0 / (double)((bts & 0x7ff) + 1));
                 }
             }
 

@@ -77,7 +77,7 @@ namespace NovAtelLogReader
                     Power = power
                 };
 
-                timestamp += 50;
+                timestamp += 20;
             }
         }
 
@@ -217,6 +217,11 @@ namespace NovAtelLogReader
 
             lock (_locker)
             {
+                //foreach (var item in pointIsmdetobs)
+                //{
+                //    Console.WriteLine("{0}{1} {2} {3} [{4}]", item.NavigationSystem, item.Prn, item.SignalType, item.Power, item.Timestamp);
+                //}
+
                 _dataPointsIsmdetobs.AddRange(pointIsmdetobs);
             }
 

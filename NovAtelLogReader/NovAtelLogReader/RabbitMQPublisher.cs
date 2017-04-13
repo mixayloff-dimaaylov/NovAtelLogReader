@@ -137,7 +137,7 @@ namespace NovAtelLogReader
                 channel.BasicPublish(String.Empty, queueNameIsmrawtec, null, buffer.ToArray());
             }
         }
-        public void PublishIsmdeoobs(List<DataPointIsmdetobs> dataPoints)
+        public void PublishIsmdetobs(List<DataPointIsmdetobs> dataPoints)
         {
             Console.WriteLine("Отправка {0} точек", dataPoints.Count);
             _logger.Info("Отправка данных в очередь");
