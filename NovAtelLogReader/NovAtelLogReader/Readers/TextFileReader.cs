@@ -50,7 +50,7 @@ namespace NovAtelLogReader.Readers
                     while ((line = _file.ReadLine()) != null)
                     {
                         DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord =  _recordFormat.Parse(line) });
-                            Thread.Sleep(18);
+                        Thread.Sleep(18);
                         
                     }
                 }, _cts.Token);

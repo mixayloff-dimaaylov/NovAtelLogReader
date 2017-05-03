@@ -21,7 +21,7 @@ namespace NovAtelLogReader
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
-            var _processor = new Processor(new ComPortReader(), new RabbitMQPublisher(), new BinaryLogRecordFormat());
+            var _processor = new Processor(new ComPortReader(), new KafkaPublisher(), new BinaryLogRecordFormat());
             try
             {
                 _logger.Info("Запуск программы.");

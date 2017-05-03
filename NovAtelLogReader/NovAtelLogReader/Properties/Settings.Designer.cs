@@ -49,7 +49,7 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("amqp://uniframe:uniframe@172.20.5.28:5672/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("amqp://guest:guest@127.0.0.1:5672/")]
         public string RabbitConnectionString {
             get {
                 return ((string)(this["RabbitConnectionString"]));
@@ -164,6 +164,18 @@ namespace NovAtelLogReader.Properties {
             }
             set {
                 this["QueueNameIsmdetobs"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ion-node-01")]
+        public string KafkaBrokers {
+            get {
+                return ((string)(this["KafkaBrokers"]));
+            }
+            set {
+                this["KafkaBrokers"] = value;
             }
         }
     }

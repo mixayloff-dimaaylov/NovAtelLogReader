@@ -9,7 +9,7 @@
       <Value Profile="(Default)">C:\Users\savartsov\Source\range.txt</Value>
     </Setting>
     <Setting Name="RabbitConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">amqp://uniframe:uniframe@172.20.5.28:5672/</Value>
+      <Value Profile="(Default)">amqp://guest:guest@127.0.0.1:5672/</Value>
     </Setting>
     <Setting Name="QueueNameRange" Type="System.String" Scope="User">
       <Value Profile="(Default)">datapoint-raw-range</Value>
@@ -37,6 +37,9 @@
     </Setting>
     <Setting Name="QueueNameIsmdetobs" Type="System.String" Scope="User">
       <Value Profile="(Default)">datapoint-raw-ismdetobs</Value>
+    </Setting>
+    <Setting Name="KafkaBrokers" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ion-node-01</Value>
     </Setting>
   </Settings>
 </SettingsFile>
