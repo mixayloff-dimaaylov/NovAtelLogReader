@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NovAtelLogReader.LogRecordFormats;
+using System;
 
-namespace NovAtelLogReader
+namespace NovAtelLogReader.Readers
 {
     interface IReader
     {
         void Open(ILogRecordFormat recordFormat);
         void Close();
         event EventHandler<ReceiveEventArgs> DataReceived;
+        event EventHandler<EventArgs> ReadError;
     }
 }

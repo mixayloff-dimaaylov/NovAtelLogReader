@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using NovAtelLogReader.LogData;
+using System;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NovAtelLogReader.DataPoints
 {
     [DataContract]
     [Serializable]
+    [DataPoint(Name = "SATXYZ2", Queue = "datapoint-raw-satxyz2")]
     class DataPointSatxyz2
     {
         [DataMember]

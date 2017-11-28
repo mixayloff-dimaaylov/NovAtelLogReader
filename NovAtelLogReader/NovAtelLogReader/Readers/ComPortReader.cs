@@ -1,9 +1,8 @@
 ﻿using NLog;
+using NovAtelLogReader.LogRecordFormats;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Ports;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +12,8 @@ namespace NovAtelLogReader.Readers
     class ComPortReader : IReader
     {
         public event EventHandler<ReceiveEventArgs> DataReceived;
+        public event EventHandler<EventArgs> ReadError;
+
         private SerialPort _serialPort;
         private CancellationTokenSource _cts;
         ILogRecordFormat _recordFormat;
@@ -74,7 +75,9 @@ namespace NovAtelLogReader.Readers
 
             _logger.Info("Инициализация приемника");
             _commands.ForEach(_serialPort.WriteLine);
+
             Thread.Sleep(1500);
+
             _serialPort.DiscardInBuffer();
             _serialPort.DiscardOutBuffer();
         }
@@ -98,28 +101,13 @@ namespace NovAtelLogReader.Readers
                         _serialPort.Read(message, 4, headerLen - 4);
                         var dataLen = BitConverter.ToUInt16(message, 8);
                         _serialPort.Read(message, headerLen, dataLen);
-                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(message) });
+                        DataReceived?.Invoke(this, new ReceiveEventArgs() { Data = message });
                     }
-
-                    //try
-                    //{
-                    //    line = _serialPort.ReadLine();
-                    //}
-                    //catch (Exception)
-                    //{
-                    //    Close();
-                    //    Thread.Sleep(100);
-                    //    InitReceiver();
-                    //}
-
-                    //if (!String.IsNullOrEmpty(line))
-                    //{
-                    //    DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord = _recordFormat.Parse(line) });
-                    //}
                 }
                 catch (Exception ex)
                 {
                     _logger.Error(ex);
+                    throw;
                 }
             }
         }

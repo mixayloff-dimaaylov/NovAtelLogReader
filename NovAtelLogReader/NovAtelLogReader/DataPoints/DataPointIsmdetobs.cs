@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using NovAtelLogReader.LogData;
+using System;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NovAtelLogReader.DataPoints
 {
     [DataContract]
     [Serializable]
+    [DataPoint(Name = "ISMDETOBS", Queue = "datapoint-raw-ismdetobs")]
     public class DataPointIsmdetobs
     {
         [DataMember]
@@ -24,6 +22,6 @@ namespace NovAtelLogReader.DataPoints
         [DataMember]
         public int GloFreq { get; set; }
         [DataMember]
-        public double Power { get; set; }
+        public double Power { get; set; }       
     }
 }

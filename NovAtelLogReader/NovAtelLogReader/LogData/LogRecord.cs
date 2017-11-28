@@ -1,13 +1,9 @@
-﻿using NovAtelLogReader.LogData;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NovAtelLogReader
+namespace NovAtelLogReader.LogData
 {
-    class LogRecord
+    public class LogRecord
     {
         public LogHeader Header { get; set; }
         public List<LogDataBase> Data { get; set; }

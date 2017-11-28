@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NovAtelLogReader.LogData
+﻿namespace NovAtelLogReader.LogData
 {
-    class LogDataBase
+    public class LogDataBase
     {
         public NavigationSystem NavigationSystem { get; set; }
         public SignalType SignalType { get; set; }

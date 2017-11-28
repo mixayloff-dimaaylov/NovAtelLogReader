@@ -1,8 +1,7 @@
-﻿using System;
+﻿using NovAtelLogReader.LogData;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace NovAtelLogReader
 {
@@ -35,6 +34,17 @@ namespace NovAtelLogReader
         private const uint ISM_GLONASS_SIGNAL_L1_CA = 1;
         private const uint ISM_GLONASS_SIGNAL_L2_CA = 3;
         private const uint ISM_GLONASS_SIGNAL_L2_P = 4;
+
+        public static IEnumerable<Type> GetTypesWithAttribute<Attribute>()
+        {
+            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (type.GetCustomAttributes(typeof(Attribute), true).Length > 0)
+                {
+                    yield return type;
+                }
+            }
+        }
 
         /// <summary>
         /// Возвращает тип навигационной системы

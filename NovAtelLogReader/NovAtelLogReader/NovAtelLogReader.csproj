@@ -68,34 +68,62 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ListConverters\ListConverterAttribute.cs" />
     <Compile Include="DataPoints\DataPointIsmdetobs.cs" />
     <Compile Include="DataPoints\DataPointIsmrawtec.cs" />
     <Compile Include="DataPoints\DataPointIsmredobs.cs" />
     <Compile Include="DataPoints\DataPointPsrpos.cs" />
     <Compile Include="DataPoints\DataPointSatvis.cs" />
     <Compile Include="DataPoints\DataPointSatxyz2.cs" />
-    <Compile Include="KafkaPublisher.cs" />
+    <Compile Include="DataPoints\DataPointAttribute.cs" />
+    <Compile Include="ListConverters\IListConverter.cs" />
+    <Compile Include="ListConverters\Satxyz2ListConverter.cs" />
+    <Compile Include="ListConverters\IsmdetobsConverter.cs" />
+    <Compile Include="ListConverters\IsmrawtecListConverter.cs" />
+    <Compile Include="ListConverters\IsmredobsListConverter.cs" />
+    <Compile Include="ListConverters\PsrposListConverter.cs" />
+    <Compile Include="ListConverters\SatvisListConverter.cs" />
+    <Compile Include="ListConverters\RangeListConverter.cs" />
+    <Compile Include="LogRecordFormats\Ascii\AbstractAsciiParser.cs" />
+    <Compile Include="LogRecordFormats\Ascii\IsmredobsParser.cs" />
+    <Compile Include="LogRecordFormats\Ascii\IsmdetobsParser.cs" />
+    <Compile Include="LogRecordFormats\Ascii\IsmrawtecParser.cs" />
+    <Compile Include="LogRecordFormats\Ascii\PsrposParser.cs" />
+    <Compile Include="LogRecordFormats\Ascii\SatvisParser.cs" />
+    <Compile Include="LogRecordFormats\Ascii\RangeParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\AbstractBinaryParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\IsmdetobsParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\IsmrawtecParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\IsmredobsParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\PsrposParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\RangeParser.cs" />
+    <Compile Include="LogRecordFormats\Binary\Satxyz2Parser.cs" />
+    <Compile Include="LogRecordFormats\Binary\SatvisParser.cs" />
+    <Compile Include="LogRecordFormats\IParser.cs" />
+    <Compile Include="LogRecordFormats\ParserAttribute.cs" />
+    <Compile Include="Publishers\AbstractGenericPublisher.cs" />
+    <Compile Include="Publishers\KafkaPublisher.cs" />
     <Compile Include="LogData\LogDataSatxyz2.cs" />
     <Compile Include="LogRecordFormats\AsciiLogRecordFormat.cs" />
     <Compile Include="LogRecordFormats\BinaryLogRecordFormat.cs" />
     <Compile Include="Readers\ComPortReader.cs" />
     <Compile Include="DataPoints\DataPointRange.cs" />
-    <Compile Include="ILogRecordFormat.cs" />
+    <Compile Include="LogRecordFormats\ILogRecordFormat.cs" />
     <Compile Include="LogData\LogDataIsmdetobs.cs" />
     <Compile Include="LogData\LogDataIsmrawtec.cs" />
     <Compile Include="LogData\LogDataIsmredobs.cs" />
     <Compile Include="LogData\LogDataPsrpos.cs" />
     <Compile Include="LogData\LogDataSatvis.cs" />
     <Compile Include="Processor.cs" />
-    <Compile Include="RabbitMQPublisher.cs" />
+    <Compile Include="Publishers\RabbitMQPublisher.cs" />
     <Compile Include="Readers\TextFileReader.cs" />
-    <Compile Include="IPublisher.cs" />
-    <Compile Include="IReader.cs" />
+    <Compile Include="Publishers\IPublisher.cs" />
+    <Compile Include="Readers\IReader.cs" />
     <Compile Include="LogData\LogDataBase.cs" />
     <Compile Include="LogData\LogDataRange.cs" />
-    <Compile Include="LogHeader.cs" />
-    <Compile Include="LogRecord.cs" />
-    <Compile Include="NavigationSystem.cs" />
+    <Compile Include="LogData\LogHeader.cs" />
+    <Compile Include="LogData\LogRecord.cs" />
+    <Compile Include="LogData\NavigationSystem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -103,8 +131,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ReceiveEventArgs.cs" />
-    <Compile Include="SignalType.cs" />
+    <Compile Include="Readers\ReceiveEventArgs.cs" />
+    <Compile Include="LogData\SignalType.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +152,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

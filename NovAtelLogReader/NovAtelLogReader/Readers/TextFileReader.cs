@@ -1,18 +1,18 @@
 ﻿using NLog;
 using System;
-
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NovAtelLogReader.LogRecordFormats;
 
 namespace NovAtelLogReader.Readers
 {
     class TextFileReader : IReader
     {
         public event EventHandler<ReceiveEventArgs> DataReceived;
+        public event EventHandler<EventArgs> ReadError;
+
         private StreamReader _file;
         private CancellationTokenSource _cts;
         private ILogRecordFormat _recordFormat;
@@ -49,9 +49,7 @@ namespace NovAtelLogReader.Readers
                     string line;
                     while ((line = _file.ReadLine()) != null)
                     {
-                        DataReceived?.Invoke(this, new ReceiveEventArgs() { LogRecord =  _recordFormat.Parse(line) });
-                        Thread.Sleep(18);
-                        
+                        DataReceived?.Invoke(this, new ReceiveEventArgs() { Data =  Encoding.ASCII.GetBytes(line) });
                     }
                 }, _cts.Token);
             }
