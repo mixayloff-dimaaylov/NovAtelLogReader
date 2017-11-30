@@ -25,6 +25,9 @@ namespace NovAtelLogReader.Readers
             _cts.Cancel();
             _cts.Dispose();
 
+            DataReceived = null;
+            ReadError = null;
+
             if (_file != null)
             {
                 _file.Dispose();
@@ -33,29 +36,33 @@ namespace NovAtelLogReader.Readers
 
         public void Open(ILogRecordFormat recordFormat)
         {
-            var fileName = Properties.Settings.Default.PathForReading;
+            var fileName = Properties.Settings.Default.TextFilePath;
             _logger.Info("Открытие файла {0}", fileName);
 
             try
             {
                 _recordFormat = recordFormat;
-                _file = new StreamReader(fileName);
                 _cts = new CancellationTokenSource();
+                _file = new StreamReader(fileName);
 
-                Task.Run(() =>
+                var readTask = Task.Run(async () =>
                 {
-                    _logger.Info("Запуск потока чтения файла.");
+                    _logger.Info("Запуск потока чтения файла");
 
                     string line;
                     while ((line = _file.ReadLine()) != null)
                     {
-                        DataReceived?.Invoke(this, new ReceiveEventArgs() { Data =  Encoding.ASCII.GetBytes(line) });
+                        DataReceived?.Invoke(this, new ReceiveEventArgs() { Data = Encoding.ASCII.GetBytes(line) });
+                        await Task.Delay(10, _cts.Token);
                     }
                 }, _cts.Token);
+                
+                readTask.ContinueWith(t => ReadError?.Invoke(this, EventArgs.Empty), TaskContinuationOptions.OnlyOnFaulted);
             }
             catch(Exception ex)
             {
                 _logger.Error(ex, "Ошибка при обработке файла {0}", fileName);
+                ReadError?.Invoke(this, EventArgs.Empty);
             }
         }
     }

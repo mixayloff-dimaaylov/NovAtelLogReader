@@ -14,7 +14,8 @@ namespace NovAtelLogReader.LogRecordFormats.Binary
             {
                 var offset = HeaderLength + idx * 16;
                 var system = (NavigationSystem)data[offset + 6];
-                LogDataIsmrawtec logDataIsmrawtec = new LogDataIsmrawtec()
+
+                record.Data.Add(new LogDataIsmrawtec()
                 {
                     Prn = data[offset + 4],
                     GloFreq = data[offset + 5],
@@ -22,8 +23,7 @@ namespace NovAtelLogReader.LogRecordFormats.Binary
                     PrimarySignal = Util.GetSignalTypeIsm(system, data[offset + 7]),
                     SecondarySignal = Util.GetSignalTypeIsm(system, data[offset + 8]),
                     Tec = BitConverter.ToSingle(data, offset + 12)
-                };
-                record.Data.Add(logDataIsmrawtec);
+                });
             }
         }
     }

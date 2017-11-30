@@ -29,6 +29,7 @@ namespace NovAtelLogReader.LogRecordFormats.Binary
             }
 
             var navigationSystem = (NavigationSystem)BitConverter.ToUInt32(data, HeaderLength);
+
             record.Data.Add(new LogDataIsmdetobs()
             {
                 Powers = powers,

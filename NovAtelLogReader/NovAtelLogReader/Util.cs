@@ -181,7 +181,7 @@ namespace NovAtelLogReader
 
         public static long GpsToUtcTime(int gpsWeek, long ms)
         {
-            DateTime datum = new DateTime(1980, 1, 6, 0, 0, 0, System.DateTimeKind.Utc);
+            DateTime datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
             DateTime week = datum.AddDays(gpsWeek * 7);
             DateTime time = week.AddMilliseconds(ms);
 

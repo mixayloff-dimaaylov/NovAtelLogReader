@@ -19,7 +19,7 @@ namespace NovAtelLogReader.LogRecordFormats.Ascii
             {
                 var tracking = Convert.ToUInt32(body[offset + 9], 16);
 
-                LogDataRange data = new LogDataRange()
+                var data = new LogDataRange()
                 {
                     Prn = UInt32.Parse(body[offset]),
                     GloFreq = Int32.Parse(body[offset + 1]),

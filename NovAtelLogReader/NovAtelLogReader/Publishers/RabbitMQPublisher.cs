@@ -21,8 +21,20 @@ namespace NovAtelLogReader.Publishers
         public override void Close()
         {
             _logger.Info("Закрытие RabbitMQ Publisher");
-            channel.Close();
-            connection.Close();
+            _queues.Clear();
+            _serializers.Clear();
+
+            if (channel != null)
+            {
+                channel.Close();
+                channel = null;
+            }
+
+            if (connection != null)
+            {
+                connection.Close();
+                connection = null;
+            }
         }
 
         private object CreateSerializer<T>()

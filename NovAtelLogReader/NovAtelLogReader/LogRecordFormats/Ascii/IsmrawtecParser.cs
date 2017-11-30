@@ -18,7 +18,8 @@ namespace NovAtelLogReader.LogRecordFormats.Ascii
             while (offset < maxIndex)
             {
                 var system = (NavigationSystem)UInt32.Parse(body[offset + 2]);
-                var data = new LogDataIsmrawtec()
+
+                record.Data.Add(new LogDataIsmrawtec()
                 {
                     Prn = uint.Parse(body[offset]),
                     GloFreq = int.Parse(body[offset + 1]),
@@ -26,9 +27,8 @@ namespace NovAtelLogReader.LogRecordFormats.Ascii
                     PrimarySignal = Util.GetSignalTypeIsm(system, uint.Parse(body[offset + 3])),
                     SecondarySignal = Util.GetSignalTypeIsm(system, uint.Parse(body[offset + 4])),
                     Tec = Double.Parse(body[offset + 8], CultureInfo.InvariantCulture)
-                };
+                });
 
-                record.Data.Add(data);
                 offset += rangeFields;
             }
         }

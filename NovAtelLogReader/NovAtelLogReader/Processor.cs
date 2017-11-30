@@ -12,7 +12,7 @@ using NovAtelLogReader.LogRecordFormats;
 
 namespace NovAtelLogReader
 {
-    class Processor
+    class Processor : IDisposable
     {
         private IReader _reader;
         private IPublisher _publisher;
@@ -23,6 +23,8 @@ namespace NovAtelLogReader
         private Dictionary<String, Type> _logTypes = new Dictionary<String, Type>();
         private Dictionary<String, IListConverter> _logListConverters = new Dictionary<String, IListConverter>();
         private Dictionary<String, List<object>> _logQueues = new Dictionary<string, List<object>>();
+
+        public event EventHandler<EventArgs> UnrecoverableError;
 
         public Processor(IReader reader, IPublisher publisher, ILogRecordFormat logRecordFormat)
         {
@@ -48,17 +50,19 @@ namespace NovAtelLogReader
         public void Start()
         {
             _logger.Info("Запуск процессора сообщений");
-            _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(Properties.Settings.Default.PublishRate));
-            _publisher.Open();
-            _reader.Open(_logRecordFormat);
+
             _reader.DataReceived += (s, e) => Task.Run(() => ProcessMessage(e.Data));
+            _reader.ReadError += (s, e) => UnrecoverableError?.Invoke(this, EventArgs.Empty);
+            _reader.Open(_logRecordFormat);
+            _publisher.Open();
+
+            _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(Properties.Settings.Default.PublishRate));
         }
 
         public void Stop()
         {
-            _logger.Info("Закрытие процессора сообщений");
+            _logger.Info("Остановка процессора сообщений");
             _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            _timer.Dispose();
             _reader.Close();
             _publisher.Close();
         }
@@ -91,9 +95,15 @@ namespace NovAtelLogReader
                     {
                         _logger.Info("Отправка {0} точек по логу {1}", queue.Value.Count, queue.Key);
                         _publisher.Publish(_logTypes[queue.Key], queue.Value);
+                        queue.Value.Clear();
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            _timer.Dispose();
         }
     }
 }

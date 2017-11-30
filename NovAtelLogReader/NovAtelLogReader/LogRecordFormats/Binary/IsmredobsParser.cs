@@ -15,6 +15,7 @@ namespace NovAtelLogReader.LogRecordFormats.Binary
             {
                 var offset = HeaderLength + idx * 56;
                 var navigationSystem = (NavigationSystem)data[offset + 6];
+
                 record.Data.Add(new LogDataIsmredobs()
                 {
                     NavigationSystem = navigationSystem,

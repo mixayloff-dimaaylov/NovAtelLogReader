@@ -25,25 +25,37 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("COM2")]
-        public string SerialPort {
+        [global::System.Configuration.DefaultSettingValueAttribute("COM15")]
+        public string ComPortName {
             get {
-                return ((string)(this["SerialPort"]));
+                return ((string)(this["ComPortName"]));
             }
             set {
-                this["SerialPort"] = value;
+                this["ComPortName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("115200")]
+        public int ComPortSpeed {
+            get {
+                return ((int)(this["ComPortSpeed"]));
+            }
+            set {
+                this["ComPortSpeed"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("E:\\Source\\range.txt")]
-        public string PathForReading {
+        public string TextFilePath {
             get {
-                return ((string)(this["PathForReading"]));
+                return ((string)(this["TextFilePath"]));
             }
             set {
-                this["PathForReading"] = value;
+                this["TextFilePath"] = value;
             }
         }
         
@@ -61,6 +73,18 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ion-node-01")]
+        public string KafkaBrokers {
+            get {
+                return ((string)(this["KafkaBrokers"]));
+            }
+            set {
+                this["KafkaBrokers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1000")]
         public uint PublishRate {
             get {
@@ -71,27 +95,30 @@ namespace NovAtelLogReader.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("115200")]
-        public int SerialPortSpeed {
+        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.Readers.TextFileReader")]
+        public string Reader {
             get {
-                return ((int)(this["SerialPortSpeed"]));
-            }
-            set {
-                this["SerialPortSpeed"] = value;
+                return ((string)(this["Reader"]));
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ion-node-01")]
-        public string KafkaBrokers {
+        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.Publishers.KafkaPublisher")]
+        public string Publisher {
             get {
-                return ((string)(this["KafkaBrokers"]));
+                return ((string)(this["Publisher"]));
             }
-            set {
-                this["KafkaBrokers"] = value;
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.LogRecordFormats.AsciiLogRecordFormat")]
+        public string Format {
+            get {
+                return ((string)(this["Format"]));
             }
         }
     }

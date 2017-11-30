@@ -32,7 +32,7 @@ namespace NovAtelLogReader.LogRecordFormats
             record.Data = new List<LogDataBase>();
             record.Header.Timestamp = Util.GpsToUtcTime(BitConverter.ToUInt16(data, 14), BitConverter.ToUInt32(data, 16));
             _parsers[messageId].Parse(data, record);
-            _logger.Info("Новое сообщение {0} @ {1}", messageId, record.Header.Timestamp);
+            _logger.Trace("Новое сообщение {0} @ {1}", messageId, record.Header.Timestamp);
             return record;
         }
     }

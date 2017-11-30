@@ -50,6 +50,10 @@ namespace NovAtelLogReader.Readers
             _logger.Info("Закрытие COM-порта");
             _cts.Cancel();
             _cts.Dispose();
+
+            DataReceived = null;
+            ReadError = null;
+
             _serialPort.Close();
             _serialPort.Dispose();
         }
@@ -64,13 +68,13 @@ namespace NovAtelLogReader.Readers
 
         private void InitReceiver()
         {
-            var portName = Properties.Settings.Default.SerialPort;
+            var portName = Properties.Settings.Default.ComPortName;
             _logger.Info("Открытие COM-порта {0}", portName);
             _cts = new CancellationTokenSource();
             _serialPort = new SerialPort(portName);
             _serialPort.ReadTimeout = 1500;
             _serialPort.WriteTimeout = 1500;
-            _serialPort.BaudRate = Properties.Settings.Default.SerialPortSpeed;
+            _serialPort.BaudRate = Properties.Settings.Default.ComPortSpeed;
             _serialPort.Open();
 
             _logger.Info("Инициализация приемника");

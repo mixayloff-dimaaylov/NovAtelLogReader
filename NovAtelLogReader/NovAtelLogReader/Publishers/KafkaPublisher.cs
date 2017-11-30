@@ -37,8 +37,12 @@ namespace NovAtelLogReader.Publishers
         {
             foreach (var producer in _producers)
             {
+                producer.Value.GetType().GetMethod("Flush", new Type[] { }).Invoke(producer.Value, new object[] { });
                 producer.Value.Dispose();
             }
+
+            _queues.Clear();
+            _producers.Clear();
         }
 
         private object CreateProducer<T>(Dictionary<string, object> config)
