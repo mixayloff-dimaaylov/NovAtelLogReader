@@ -9,6 +9,7 @@ using NovAtelLogReader.ListConverters;
 using NovAtelLogReader.Readers;
 using NovAtelLogReader.Publishers;
 using NovAtelLogReader.LogRecordFormats;
+using System.IO;
 
 namespace NovAtelLogReader
 {
@@ -18,13 +19,14 @@ namespace NovAtelLogReader
         private IPublisher _publisher;
         private ILogRecordFormat _logRecordFormat;
         private Timer _timer;
+        private int _messageCounter;
         private readonly object _locker = new object();
         private Logger _logger = LogManager.GetCurrentClassLogger();
         private Dictionary<String, Type> _logTypes = new Dictionary<String, Type>();
         private Dictionary<String, IListConverter> _logListConverters = new Dictionary<String, IListConverter>();
         private Dictionary<String, List<object>> _logQueues = new Dictionary<string, List<object>>();
 
-        public event EventHandler<EventArgs> UnrecoverableError;
+        public event EventHandler<ErrorEventArgs> UnrecoverableError;
 
         public Processor(IReader reader, IPublisher publisher, ILogRecordFormat logRecordFormat)
         {
@@ -50,21 +52,38 @@ namespace NovAtelLogReader
         public void Start()
         {
             _logger.Info("Запуск процессора сообщений");
-
+            _messageCounter = 0;
             _reader.DataReceived += (s, e) => Task.Run(() => ProcessMessage(e.Data));
-            _reader.ReadError += (s, e) => UnrecoverableError?.Invoke(this, EventArgs.Empty);
-            _reader.Open(_logRecordFormat);
-            _publisher.Open();
+            _reader.ReadError += (s, e) => UnrecoverableError?.Invoke(this, e);
 
-            _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(Properties.Settings.Default.PublishRate));
+            try
+            {
+                _reader.Open(_logRecordFormat);
+                _publisher.Open();
+                _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(Properties.Settings.Default.PublishRate));
+            }
+            catch (Exception ex)
+            {
+                UnrecoverableError?.Invoke(this, new ErrorEventArgs(ex));
+            }
         }
 
         public void Stop()
         {
             _logger.Info("Остановка процессора сообщений");
-            _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            _reader.Close();
-            _publisher.Close();
+
+            lock (_locker)
+            {
+                _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+
+                foreach (var queue in _logQueues)
+                {
+                    queue.Value.Clear();
+                }
+
+                try { _reader.Close(); } catch (Exception) { }
+                try { _publisher.Close(); } catch (Exception) { }
+            }
         }
         
         private void ProcessMessage(byte[] message)
@@ -87,6 +106,13 @@ namespace NovAtelLogReader
 
         private void PublishDataPoints()
         {
+            if (_reader.MessageCounter == _messageCounter)
+            {
+                UnrecoverableError?.Invoke(this, new ErrorEventArgs(new Exception("Число сообщений не изменилось")));
+            }
+
+            _messageCounter = _reader.MessageCounter;
+
             foreach (var queue in _logQueues)
             {
                 lock (_locker)

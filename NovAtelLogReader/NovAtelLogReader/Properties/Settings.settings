@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NovAtelLogReader.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="ComPortName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">COM15</Value>
-    </Setting>
     <Setting Name="ComPortSpeed" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">115200</Value>
     </Setting>
@@ -20,14 +17,17 @@
     <Setting Name="PublishRate" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
-    <Setting Name="Reader" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">NovAtelLogReader.Readers.TextFileReader</Value>
-    </Setting>
     <Setting Name="Publisher" Type="System.String" Scope="Application">
       <Value Profile="(Default)">NovAtelLogReader.Publishers.KafkaPublisher</Value>
     </Setting>
+    <Setting Name="Reader" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">NovAtelLogReader.Readers.ComPortReader</Value>
+    </Setting>
     <Setting Name="Format" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">NovAtelLogReader.LogRecordFormats.AsciiLogRecordFormat</Value>
+      <Value Profile="(Default)">NovAtelLogReader.LogRecordFormats.BinaryLogRecordFormat</Value>
+    </Setting>
+    <Setting Name="ComPortName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">COM2</Value>
     </Setting>
   </Settings>
 </SettingsFile>

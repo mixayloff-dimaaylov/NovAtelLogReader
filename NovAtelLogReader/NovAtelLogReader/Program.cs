@@ -6,7 +6,7 @@ using NovAtelLogReader.Publishers;
 using System.Threading;
 using System.Threading.Tasks;
 using Topshelf;
-using Topshelf.Runtime;
+using System.IO;
 
 namespace NovAtelLogReader
 {
@@ -21,26 +21,31 @@ namespace NovAtelLogReader
         private IPublisher _publisher = (IPublisher)Activator.CreateInstance(Type.GetType(Properties.Settings.Default.Publisher));
         private ILogRecordFormat _format = (ILogRecordFormat)Activator.CreateInstance(Type.GetType(Properties.Settings.Default.Format));
 
+        private void UnrecoverableErrorHandler(object sender, ErrorEventArgs eventArgs)
+        {
+            _logger.Fatal(eventArgs.GetException());
+            _signal.Set();
+        }
+
         private async void Loop()
         {
             using (_processor = new Processor(_reader, _publisher, _format))
             {
-                _processor.UnrecoverableError += (s, e) => _signal.Set();
+                _processor.UnrecoverableError += UnrecoverableErrorHandler;
 
                 while (!_cancellation.IsCancellationRequested)
                 {
                     try
                     {
                         _processor.Start();
+                        _signal.WaitOne();
+                        _signal.Reset();
+                        _processor.Stop();
                     }
                     catch (Exception ex)
                     {
-                        _logger.Error(ex);
+                        _logger.Fatal(ex);
                     }
-
-                    _signal.WaitOne();
-                    _signal.Reset();
-                    _processor.Stop();
 
                     await Task.Delay(1000, _cancellation.Token);
                 }
@@ -49,14 +54,14 @@ namespace NovAtelLogReader
 
         public void Start()
         {
-            _logger.Fatal("C A N C E L L A T I O N   I S   {0}", _cancellation == null);
-
+            _logger.Info("Запуск службы");
             _cancellation = new CancellationTokenSource();
             Task.Run(() => Loop(), _cancellation.Token);
         }
 
         public void Stop()
         {
+            _logger.Info("Остановка службы");
             _cancellation.Cancel();
             _signal.Set();
         }

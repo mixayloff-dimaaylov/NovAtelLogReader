@@ -25,18 +25,6 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("COM15")]
-        public string ComPortName {
-            get {
-                return ((string)(this["ComPortName"]));
-            }
-            set {
-                this["ComPortName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("115200")]
         public int ComPortSpeed {
             get {
@@ -97,15 +85,6 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.Readers.TextFileReader")]
-        public string Reader {
-            get {
-                return ((string)(this["Reader"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.Publishers.KafkaPublisher")]
         public string Publisher {
             get {
@@ -115,10 +94,31 @@ namespace NovAtelLogReader.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.LogRecordFormats.AsciiLogRecordFormat")]
+        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.Readers.ComPortReader")]
+        public string Reader {
+            get {
+                return ((string)(this["Reader"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NovAtelLogReader.LogRecordFormats.BinaryLogRecordFormat")]
         public string Format {
             get {
                 return ((string)(this["Format"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("COM2")]
+        public string ComPortName {
+            get {
+                return ((string)(this["ComPortName"]));
+            }
+            set {
+                this["ComPortName"] = value;
             }
         }
     }

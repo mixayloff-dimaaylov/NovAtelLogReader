@@ -46,29 +46,23 @@ namespace NovAtelLogReader.Publishers
         {
             _logger.Info("Открытие RabbitMQ Publisher");
             var connectionString = Properties.Settings.Default.RabbitConnectionString;
-            try
-            {
-                factory = new ConnectionFactory();
-                factory.Uri = connectionString;
-                connection = factory.CreateConnection();
-                channel = connection.CreateModel();
+           
+            factory = new ConnectionFactory();
+            factory.Uri = new Uri(connectionString);
+            connection = factory.CreateConnection();
+            channel = connection.CreateModel();
 
-                foreach (var type in Util.GetTypesWithAttribute<DataPointAttribute>())
-                {
-                    var queue = type.GetCustomAttribute<DataPointAttribute>().Queue;
-                    var serializer = typeof(RabbitMQPublisher)
-                        .GetMethod("CreateSerializer", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .MakeGenericMethod(type)
-                        .Invoke(this, new object[] { });
-
-                    _queues.Add(type, queue);
-                    _serializers.Add(type, serializer);
-                    channel.QueueDeclare(queue, true, false, false, null);
-                }
-            }
-            catch(Exception ex)
+            foreach (var type in Util.GetTypesWithAttribute<DataPointAttribute>())
             {
-                _logger.Error(ex);
+                var queue = type.GetCustomAttribute<DataPointAttribute>().Queue;
+                var serializer = typeof(RabbitMQPublisher)
+                    .GetMethod("CreateSerializer", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .MakeGenericMethod(type)
+                    .Invoke(this, null);
+
+                _queues.Add(type, queue);
+                _serializers.Add(type, serializer);
+                channel.QueueDeclare(queue, true, false, false, null);
             }
         }
 
@@ -76,8 +70,11 @@ namespace NovAtelLogReader.Publishers
         {
             using (var buffer = new MemoryStream())
             {
-                (_serializers[typeof(T)] as IAvroSerializer<List<T>>).Serialize(buffer, value);
-                channel.BasicPublish(String.Empty, _queues[typeof(T)], null, buffer.ToArray());
+                if (_serializers.ContainsKey(typeof(T)) && _queues.ContainsKey(typeof(T)))
+                {
+                    (_serializers[typeof(T)] as IAvroSerializer<List<T>>).Serialize(buffer, value);
+                    channel.BasicPublish(String.Empty, _queues[typeof(T)], null, buffer.ToArray());
+                }
             }
         }
     }

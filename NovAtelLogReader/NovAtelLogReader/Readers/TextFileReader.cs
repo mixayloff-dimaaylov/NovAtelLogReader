@@ -11,12 +11,19 @@ namespace NovAtelLogReader.Readers
     class TextFileReader : IReader
     {
         public event EventHandler<ReceiveEventArgs> DataReceived;
-        public event EventHandler<EventArgs> ReadError;
+        public event EventHandler<ErrorEventArgs> ReadError;
 
         private StreamReader _file;
         private CancellationTokenSource _cts;
         private ILogRecordFormat _recordFormat;
         private Logger _logger = LogManager.GetCurrentClassLogger();
+
+        private volatile int _messageCounter;
+
+        public int MessageCounter
+        {
+            get { return _messageCounter; }
+        }
 
         public void Close()
         {
@@ -38,32 +45,25 @@ namespace NovAtelLogReader.Readers
         {
             var fileName = Properties.Settings.Default.TextFilePath;
             _logger.Info("Открытие файла {0}", fileName);
+            _recordFormat = recordFormat;
+            _cts = new CancellationTokenSource();
+            _file = new StreamReader(fileName);
+            _messageCounter = 0;
 
-            try
+            var readTask = Task.Run(async () =>
             {
-                _recordFormat = recordFormat;
-                _cts = new CancellationTokenSource();
-                _file = new StreamReader(fileName);
+                _logger.Info("Запуск потока чтения файла");
 
-                var readTask = Task.Run(async () =>
+                string line;
+                while ((line = _file.ReadLine()) != null)
                 {
-                    _logger.Info("Запуск потока чтения файла");
-
-                    string line;
-                    while ((line = _file.ReadLine()) != null)
-                    {
-                        DataReceived?.Invoke(this, new ReceiveEventArgs() { Data = Encoding.ASCII.GetBytes(line) });
-                        await Task.Delay(10, _cts.Token);
-                    }
-                }, _cts.Token);
+                    _messageCounter++;
+                    DataReceived?.Invoke(this, new ReceiveEventArgs() { Data = Encoding.ASCII.GetBytes(line) });
+                    await Task.Delay(10, _cts.Token);
+                }
+            }, _cts.Token);
                 
-                readTask.ContinueWith(t => ReadError?.Invoke(this, EventArgs.Empty), TaskContinuationOptions.OnlyOnFaulted);
-            }
-            catch(Exception ex)
-            {
-                _logger.Error(ex, "Ошибка при обработке файла {0}", fileName);
-                ReadError?.Invoke(this, EventArgs.Empty);
-            }
+            readTask.ContinueWith(_ => ReadError?.Invoke(this, new ErrorEventArgs(_.Exception)), TaskContinuationOptions.OnlyOnFaulted);
         }
     }
 }

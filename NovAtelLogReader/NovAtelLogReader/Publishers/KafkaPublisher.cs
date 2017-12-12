@@ -18,7 +18,12 @@ namespace NovAtelLogReader.Publishers
             avro = AvroSerializer.Create<List<T>>();
         }
 
-        public byte[] Serialize(List<T> data)
+        public IEnumerable<KeyValuePair<string, object>> Configure(IEnumerable<KeyValuePair<string, object>> config, bool isKey)
+        {
+            return config;
+        }
+
+        public byte[] Serialize(string topic, List<T> data)
         {
             using (var buffer = new MemoryStream())
             {
@@ -37,8 +42,14 @@ namespace NovAtelLogReader.Publishers
         {
             foreach (var producer in _producers)
             {
-                producer.Value.GetType().GetMethod("Flush", new Type[] { }).Invoke(producer.Value, new object[] { });
-                producer.Value.Dispose();
+                try
+                {
+                    producer.Value.GetType().GetMethod("Flush", new Type[] { }).Invoke(producer.Value, null);
+                }
+                finally
+                {
+                    producer.Value.Dispose();
+                }
             }
 
             _queues.Clear();
@@ -53,6 +64,9 @@ namespace NovAtelLogReader.Publishers
         public override void Open()
         {
             var config = new Dictionary<string, object> { { "bootstrap.servers", Properties.Settings.Default.KafkaBrokers } };
+
+            _queues.Clear();
+            _producers.Clear();
 
             foreach (var type in Util.GetTypesWithAttribute<DataPointAttribute>())
             {
@@ -69,7 +83,10 @@ namespace NovAtelLogReader.Publishers
 
         public override void Publish<T>(List<T> value)
         {
-            (_producers[typeof(T)] as Producer<Null, List<T>>).ProduceAsync(_queues[typeof(T)], null, value);
+            if (_producers.ContainsKey(typeof(T)) && _queues.ContainsKey(typeof(T)))
+            {
+                (_producers[typeof(T)] as Producer<Null, List<T>>).ProduceAsync(_queues[typeof(T)], null, value);
+            }
         }
     }
 }

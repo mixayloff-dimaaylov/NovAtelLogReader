@@ -60,8 +60,9 @@ namespace NovAtelLogReader
         /// <summary>
         /// Возвращает тип сигнала навигационной системы
         /// </summary>
-        /// <param name="tracking"></param>
-        /// <returns></returns>
+        /// <param name="system">Навигационная система</param>
+        /// <param name="code">Код сигнала</param>
+        /// <returns>Тип сигнала</returns>
         public static SignalType GetSignalType(NavigationSystem system, uint code)
         {
             switch (system)
@@ -96,6 +97,12 @@ namespace NovAtelLogReader
             }
         }
 
+        /// <summary>
+        /// Возвращает тип сигнала навигационной системы для логов ISM*
+        /// </summary>
+        /// <param name="system">Навигационная система</param>
+        /// <param name="code">Код сигнала</param>
+        /// <returns>Тип сигнала</returns>
         public static SignalType GetSignalTypeIsm(NavigationSystem system, uint code)
         {
             switch (system)
@@ -179,6 +186,12 @@ namespace NovAtelLogReader
             return NavigationSystem.Other;
         }
 
+        /// <summary>
+        /// Преобразование времени GPS в Unix Timestamp
+        /// </summary>
+        /// <param name="gpsWeek">Неделя GPS</param>
+        /// <param name="ms">GPS Timestamp</param>
+        /// <returns>Unix Timestamp</returns>
         public static long GpsToUtcTime(int gpsWeek, long ms)
         {
             DateTime datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
@@ -187,5 +200,47 @@ namespace NovAtelLogReader
 
             return new DateTimeOffset(time).ToLocalTime().ToUnixTimeMilliseconds();
         }
+
+        #region CRC 32
+        private const ulong CRC32_POLYNOMIAL = 0xEDB88320L;
+
+        private static ulong CRC32Value(ulong ulCRC)
+        {
+            int j;
+
+            for (j = 8; j > 0; j--)
+            {
+                if ((ulCRC & 1) != 0)
+                    ulCRC = (ulCRC >> 1) ^ CRC32_POLYNOMIAL;
+                else
+                    ulCRC >>= 1;
+            }
+
+            return ulCRC;
+        }
+
+        /// <summary>
+        /// Алгоритм вычисления контрольной суммы бинарного пакета
+        /// OEM6 Firmware Reference Manual Rev 9, 32-Bit CRC (p.34)
+        /// </summary>
+        /// <param name="ucBuffer"></param>
+        /// <returns></returns>
+        public static ulong CalculateBlockCRC32(byte[] ucBuffer)
+        {
+            ulong ulTemp1;
+            ulong ulTemp2;
+            ulong ulCRC = 0;
+            long idx = 0;
+
+            while (idx < ucBuffer.LongLength)
+            {
+                ulTemp1 = (ulCRC >> 8) & 0x00FFFFFFL;
+                ulTemp2 = CRC32Value((ulCRC ^ ucBuffer[idx++]) & 0xff);
+                ulCRC = ulTemp1 ^ ulTemp2;
+            }
+
+            return ulCRC;
+        }
+        #endregion
     }
 }
