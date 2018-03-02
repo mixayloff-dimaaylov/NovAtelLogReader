@@ -108,7 +108,7 @@ namespace NovAtelLogReader
         {
             if (_reader.MessageCounter == _messageCounter)
             {
-                UnrecoverableError?.Invoke(this, new ErrorEventArgs(new Exception("Число сообщений не изменилось")));
+                UnrecoverableError?.Invoke(this, new ErrorEventArgs(new FatalException("Число сообщений не изменилось")));
             }
 
             _messageCounter = _reader.MessageCounter;

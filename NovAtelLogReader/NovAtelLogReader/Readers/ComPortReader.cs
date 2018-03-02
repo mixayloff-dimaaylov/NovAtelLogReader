@@ -77,7 +77,7 @@ namespace NovAtelLogReader.Readers
                 _serialPort.Close();
                 _serialPort.Dispose();
                 _serialPort = null;
-            }
+            }            
         }
 
         public void Open(ILogRecordFormat recordFormat)

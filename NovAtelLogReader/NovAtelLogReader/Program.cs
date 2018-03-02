@@ -5,8 +5,8 @@ using NovAtelLogReader.LogRecordFormats;
 using NovAtelLogReader.Publishers;
 using System.Threading;
 using System.Threading.Tasks;
-using Topshelf;
 using System.IO;
+using System.IO.Pipes;
 
 namespace NovAtelLogReader
 {
@@ -23,8 +23,21 @@ namespace NovAtelLogReader
 
         private void UnrecoverableErrorHandler(object sender, ErrorEventArgs eventArgs)
         {
-            _logger.Fatal(eventArgs.GetException());
-            _signal.Set();
+            var exception = eventArgs.GetException();
+            _logger.Fatal(exception);
+
+            // Fail fast
+            Environment.Exit(1);
+
+            //if (exception is FatalException)
+            //{
+            //    _logger.Fatal("Аварийная остановка");
+            //    Environment.Exit(1);
+            //}
+            //else
+            //{
+            //    _signal.Set();
+            //}
         }
 
         private async void Loop()
@@ -72,21 +85,18 @@ namespace NovAtelLogReader
     {
         public static void Main()
         {
+            var pipe = new NamedPipeClientStream(".", "novatel-log-reader", PipeDirection.InOut);
+            var service = new NovAtelService();
 
-            HostFactory.Run(host =>
+            service.Start();
+            pipe.Connect();
+
+            using (var reader = new StreamReader(pipe))
             {
-                host.Service<NovAtelService>(service =>
-                {
-                    service.ConstructUsing(name => new NovAtelService());
-                    service.WhenStarted(x => x.Start());
-                    service.WhenStopped(x => x.Stop());
-                });
-                
-                host.RunAsLocalSystem();
-                host.SetDescription("Сервис чтения данных со спутникового приемника NovAtel");
-                host.SetDisplayName("Сервис NovAtel");
-                host.SetServiceName("NovAtelService");
-            });
+                reader.ReadLine();
+            }
+
+            service.Stop();
         }
     }
 }
