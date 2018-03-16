@@ -20,7 +20,7 @@ namespace NovAtelLogReader.LogRecordFormats.Binary
                 {
                     NavigationSystem = navigationSystem,
                     Prn = data[offset + 4],
-                    GloFreq = data[offset + 5],
+                    GloFreq = (sbyte) data[offset + 5],
                     SignalType = Util.GetSignalTypeIsm(navigationSystem, data[offset + 7]),
                     AverageCmc = BitConverter.ToSingle(data, offset + 24),
                     CmcStdDev = BitConverter.ToSingle(data, offset + 28),

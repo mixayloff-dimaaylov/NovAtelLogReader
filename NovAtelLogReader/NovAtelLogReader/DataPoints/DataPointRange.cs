@@ -29,5 +29,19 @@ namespace NovAtelLogReader.DataPoints
         public double CNo { get; set; }
         [DataMember]
         public double Power { get; set; }
+
+        public bool IsValid()
+        {
+            switch (NavigationSystem)
+            {
+                case NavigationSystem.GLONASS:
+                    return Prn > 0 && Prn <= 27;
+                case NavigationSystem.GPS:
+                    return Prn > 0 && Prn <= 32;
+                default:
+                    return false;
+
+            }
+        }
     }
 }

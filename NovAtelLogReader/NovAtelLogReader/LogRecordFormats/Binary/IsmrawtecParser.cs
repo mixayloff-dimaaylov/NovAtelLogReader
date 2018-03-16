@@ -18,7 +18,7 @@ namespace NovAtelLogReader.LogRecordFormats.Binary
                 record.Data.Add(new LogDataIsmrawtec()
                 {
                     Prn = data[offset + 4],
-                    GloFreq = data[offset + 5],
+                    GloFreq = (sbyte) data[offset + 5],
                     NavigationSystem = system,
                     PrimarySignal = Util.GetSignalTypeIsm(system, data[offset + 7]),
                     SecondarySignal = Util.GetSignalTypeIsm(system, data[offset + 8]),

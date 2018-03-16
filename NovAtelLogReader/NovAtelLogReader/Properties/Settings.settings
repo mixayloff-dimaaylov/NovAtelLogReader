@@ -29,5 +29,24 @@
     <Setting Name="ComPortName" Type="System.String" Scope="User">
       <Value Profile="(Default)">COM2</Value>
     </Setting>
+    <Setting Name="InitCommands" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;UNLOGALL TRUE&lt;/string&gt;
+  &lt;string&gt;CNOUPDATE 20HZ&lt;/string&gt;
+  &lt;string&gt;DIFFCODEBIASCONTROL DISABLE&lt;/string&gt;
+  &lt;string&gt;EXTERNALCLOCK DISABLE&lt;/string&gt;
+  &lt;string&gt;RTKDYNAMICS STATIC&lt;/string&gt;
+  &lt;string&gt;SETIONOTYPE L1L2&lt;/string&gt;
+  &lt;string&gt;ISMBANDWIDTH 1.0 0.0&lt;/string&gt;
+  &lt;string&gt;ISMSIGNALCONTROL GPSL2P ENABLE ENABLE&lt;/string&gt;
+  &lt;string&gt;LOG PSRPOSB ONTIME 1&lt;/string&gt;
+  &lt;string&gt;LOG RANGEB ONTIME 0.02&lt;/string&gt;
+  &lt;string&gt;LOG ISMRAWTECB ONNEW&lt;/string&gt;
+  &lt;string&gt;LOG ISMDETOBSB ONNEW&lt;/string&gt;
+  &lt;string&gt;LOG ISMREDOBSB ONNEW&lt;/string&gt;
+  &lt;string&gt;LOG SATXYZ2B ONTIME 10&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

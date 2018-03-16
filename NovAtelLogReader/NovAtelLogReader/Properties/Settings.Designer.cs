@@ -12,7 +12,7 @@ namespace NovAtelLogReader.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -119,6 +119,34 @@ namespace NovAtelLogReader.Properties {
             }
             set {
                 this["ComPortName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>UNLOGALL TRUE</string>
+  <string>CNOUPDATE 20HZ</string>
+  <string>DIFFCODEBIASCONTROL DISABLE</string>
+  <string>EXTERNALCLOCK DISABLE</string>
+  <string>RTKDYNAMICS STATIC</string>
+  <string>SETIONOTYPE L1L2</string>
+  <string>ISMBANDWIDTH 1.0 0.0</string>
+  <string>ISMSIGNALCONTROL GPSL2P ENABLE ENABLE</string>
+  <string>LOG PSRPOSB ONTIME 1</string>
+  <string>LOG RANGEB ONTIME 0.02</string>
+  <string>LOG ISMRAWTECB ONNEW</string>
+  <string>LOG ISMDETOBSB ONNEW</string>
+  <string>LOG ISMREDOBSB ONNEW</string>
+  <string>LOG SATXYZ2B ONTIME 10</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection InitCommands {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["InitCommands"]));
+            }
+            set {
+                this["InitCommands"] = value;
             }
         }
     }

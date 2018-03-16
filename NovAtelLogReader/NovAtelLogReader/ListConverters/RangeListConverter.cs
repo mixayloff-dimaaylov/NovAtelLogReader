@@ -26,7 +26,7 @@ namespace NovAtelLogReader.ListConverters
                     Psr = range.Psr,
                     CNo = range.CNo
                 };
-            });
+            }).Where(range => range.IsValid());
         }
     }
 }

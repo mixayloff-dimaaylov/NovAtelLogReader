@@ -20,9 +20,12 @@ namespace NovAtelLogReader.Readers
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
-        // private SerialPort _serialPort;
-
+#if USE_PI_SERIAL_PORT
         private PISerialPort _serialPort;
+#else
+        private SerialPort _serialPort;
+#endif
+
         private CancellationTokenSource _cts;
         ILogRecordFormat _recordFormat;
 
@@ -30,28 +33,6 @@ namespace NovAtelLogReader.Readers
 
         private readonly int HeaderLength = 28;
         private readonly byte[] HeaderStart = new byte[] { 0xaa, 0x44, 0x12 };
-
-        private readonly List<string> _initCommands = new List<string>()
-        {
-            "UNLOGALL TRUE",
-            "CNOUPDATE 20HZ",
-            "DIFFCODEBIASCONTROL DISABLE",
-            "EXTERNALCLOCK DISABLE",
-            "DLLTIMECONSTA GPSL2P 0",
-            "DLLTIMECONSTA GPSL2C 0",
-            "DLLTIMECONSTA GLOL2P 0",
-            "DLLTIMECONSTA GLOL2CA 0",
-            "RTKDYNAMICS STATIC",
-            "SETIONOTYPE L1L2",
-            "ISMBANDWIDTH 1.0 0.0",
-            "ISMSIGNALCONTROL GPSL2P ENABLE ENABLE",
-            "LOG PSRPOSB ONTIME 1",
-            "LOG RANGEB ONTIME 0.02",
-            "LOG ISMRAWTECB ONNEW",
-            "LOG ISMDETOBSB ONNEW",
-            "LOG ISMREDOBSB ONNEW",
-            "LOG SATXYZ2B ONTIME 10"
-        };
 
         public int MessageCounter
         {
@@ -96,19 +77,21 @@ namespace NovAtelLogReader.Readers
             _logger.Info("Открытие COM-порта {0}", portName);
             _cts = new CancellationTokenSource();
 
-            //_serialPort = new SerialPort(portName);
-            //_serialPort.ReadTimeout = 1500;
-            //_serialPort.WriteTimeout = 1500;
-            //_serialPort.DtrEnable = true;
-            //_serialPort.RtsEnable = true;
-            //_serialPort.BaudRate = Properties.Settings.Default.ComPortSpeed;
-            //_serialPort.Open();
-
+#if USE_PI_SERIAL_PORT
             _serialPort = new PISerialPort();
             _serialPort.Open(portName, Properties.Settings.Default.ComPortSpeed);
+#else
+            _serialPort = new SerialPort(portName);
+            _serialPort.ReadTimeout = 1500;
+            _serialPort.WriteTimeout = 1500;
+            _serialPort.DtrEnable = true;
+            _serialPort.RtsEnable = true;
+            _serialPort.BaudRate = Properties.Settings.Default.ComPortSpeed;
+            _serialPort.Open();
+#endif
 
             _logger.Info("Инициализация приемника");
-            _initCommands.ForEach(_serialPort.WriteLine);
+            Properties.Settings.Default.InitCommands.Cast<string>().ToList().ForEach(_serialPort.WriteLine);
 
             Thread.Sleep(1500);
 
@@ -124,6 +107,9 @@ namespace NovAtelLogReader.Readers
 
             while (!_cts.IsCancellationRequested)
             {
+                Array.Resize(ref buffer, HeaderLength);
+                Array.Clear(buffer, 0, HeaderLength);
+
                 if (_serialPort.Read(buffer, 0, 1) > 0 && buffer[0] != 0xaa) continue;
                 if (_serialPort.Read(buffer, 1, 1) > 0 && buffer[1] != 0x44) continue;
                 if (_serialPort.Read(buffer, 2, 1) > 0 && buffer[2] != 0x12) continue;
@@ -137,7 +123,7 @@ namespace NovAtelLogReader.Readers
                 Array.Resize(ref buffer, HeaderLength + dataLength);
                 _serialPort.Read(buffer, HeaderLength, dataLength);
                 _serialPort.Read(crc, 0, 4);
-                
+
                 if (Util.CalculateBlockCRC32(buffer) == BitConverter.ToUInt32(crc, 0))
                 {
                     DataReceived?.Invoke(this, new ReceiveEventArgs() { Data = buffer });
