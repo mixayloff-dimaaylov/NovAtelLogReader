@@ -28,6 +28,8 @@ namespace NovAtelLogReader.DataPoints
         [DataMember]
         public double CNo { get; set; }
         [DataMember]
+        public double LockTime { get; set; }
+        [DataMember]
         public double Power { get; set; }
 
         public bool IsValid()

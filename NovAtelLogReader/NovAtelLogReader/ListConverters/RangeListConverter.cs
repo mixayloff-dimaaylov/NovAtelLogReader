@@ -24,6 +24,7 @@ namespace NovAtelLogReader.ListConverters
                     GloFreq = range.GloFreq,
                     Adr = range.Adr,
                     Psr = range.Psr,
+                    LockTime = range.LockTime,
                     CNo = range.CNo
                 };
             }).Where(range => range.IsValid());
