@@ -71,13 +71,15 @@ namespace NovAtelLogReader
                     switch (code)
                     {
                         case GPS_SIGNAL_L1_CA:
-                            return SignalType.L1;
+                            return SignalType.L1CA;
                         case GPS_SIGNAL_L2_C:
+                            return SignalType.L2C;
                         case GPS_SIGNAL_L2_P:
+                            return SignalType.L2P;
                         case GPS_SIGNAL_L2_P_CODELESS:
-                            return SignalType.L2;
+                            return SignalType.L2P_codeless;
                         case GPS_SIGNAL_L5_Q:
-                            return SignalType.L5;
+                            return SignalType.L5Q;
                         default:
                             return SignalType.Unknown;
                     }
@@ -85,10 +87,11 @@ namespace NovAtelLogReader
                     switch (code)
                     {
                         case GLONASS_SIGNAL_L1_CA:
-                            return SignalType.L1;
+                            return SignalType.L1CA;
                         case GLONASS_SIGNAL_L2_CA:
+                            return SignalType.L2CA;
                         case GLONASS_SIGNAL_L2_P:
-                            return SignalType.L2;
+                            return SignalType.L2P;
                         default:
                             return SignalType.Unknown;
                     }
@@ -111,13 +114,15 @@ namespace NovAtelLogReader
                     switch (code)
                     {
                         case ISM_GPS_SIGNAL_L1_CA:
-                            return SignalType.L1;
+                            return SignalType.L1CA;
                         case ISM_GPS_SIGNAL_L2_Y:
+                            return SignalType.L2Y;
                         case ISM_GPS_SIGNAL_L2_C:
+                            return SignalType.L2C;
                         case ISM_GPS_SIGNAL_L2_P:
-                            return SignalType.L2;
+                            return SignalType.L2P;
                         case ISM_GPS_SIGNAL_L5_Q:
-                            return SignalType.L5;
+                            return SignalType.L5Q;
                         default:
                             return SignalType.Unknown;
                     }
@@ -125,10 +130,11 @@ namespace NovAtelLogReader
                     switch (code)
                     {
                         case ISM_GLONASS_SIGNAL_L1_CA:
-                            return SignalType.L1;
+                            return SignalType.L1CA;
                         case ISM_GLONASS_SIGNAL_L2_CA:
+                            return SignalType.L2CA;
                         case ISM_GLONASS_SIGNAL_L2_P:
-                            return SignalType.L2;
+                            return SignalType.L2P;
                         default:
                             return SignalType.Unknown;
                     }

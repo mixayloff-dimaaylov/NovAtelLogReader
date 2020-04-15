@@ -3,8 +3,12 @@
     public enum SignalType
     {
         Unknown,
-        L1,
-        L2,
-        L5
+        L1CA,
+        L2C,
+        L2CA,
+        L2P,
+        L2P_codeless,
+        L2Y,
+        L5Q
     }
 }
