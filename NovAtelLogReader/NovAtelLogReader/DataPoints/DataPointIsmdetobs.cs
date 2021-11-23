@@ -1,4 +1,4 @@
-﻿using NovAtelLogReader.LogData;
+using NovAtelLogReader.LogData;
 using System;
 using System.Runtime.Serialization;
 

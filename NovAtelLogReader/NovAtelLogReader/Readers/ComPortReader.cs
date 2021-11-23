@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using NovAtelLogReader.LogRecordFormats;
 using NovAtelLogReader.PInvoke;
 using System;
