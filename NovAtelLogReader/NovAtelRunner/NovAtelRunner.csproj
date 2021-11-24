@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{07275CFF-301B-4D54-A59C-FD7FC7182FFD}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>NovAtelRunner</AssemblyTitle>
     <Product>NovAtelRunner</Product>

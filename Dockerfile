@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
@@ -15,7 +15,7 @@ RUN dotnet build NovAtelLogReader --configuration Release
 RUN dotnet build NovAtelRunner --configuration Release
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:3.1
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-COPY --from=build /source/NovAtelLogReader/Release/netcoreapp3.1/. .
+COPY --from=build /source/NovAtelLogReader/Release/netcoreapp6.0/. .
 ENTRYPOINT "/app/NovAtelLogReader"
