@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{3ABBE911-C2EE-4041-9864-C4F1BC959D9D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>NovAtelLogReader</AssemblyTitle>
     <Product>NovAtelLogReader</Product>
@@ -42,6 +42,6 @@
     <PackageReference Include="NLog.Schema" Version="4.7.2" />
     <PackageReference Include="RabbitMQ.Client" Version="6.1.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
-    <PackageReference Include="System.IO.Ports" Version="4.7.0" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
   </ItemGroup>
 </Project>

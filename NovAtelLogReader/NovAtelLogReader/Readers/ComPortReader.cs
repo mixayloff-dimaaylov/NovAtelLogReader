@@ -85,8 +85,8 @@ namespace NovAtelLogReader.Readers
             {
                 ReadTimeout = 1500,
                 WriteTimeout = 1500,
-                DtrEnable = true,
-                RtsEnable = true,
+                DtrEnable = false,
+                RtsEnable = false,
                 BaudRate = Properties.Settings.Default.ComPortSpeed,
             };
             _serialPort.Open();
