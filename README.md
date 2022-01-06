@@ -38,11 +38,11 @@ NovAtelLogReader
    внутрь контейнера, примонтировав всю файловую систему */dev*:
 
    ```sh
-   docker run --rm -v /dev/:/dev/ -v /etc/hosts:/etc/hosts novatellogreader
+   docker run --rm -v /dev/:/dev/ -v /etc/hosts:/etc/hosts novatellogreader:latest
    ```
 
    Либо пробросив соответвующее устройство при запуске контейнера:
 
    ```sh
-   docker run --rm --device '<полное_имя_устройства>' -v /etc/hosts:/etc/hosts novatellogreader
+   docker run --rm --device '<полное_имя_устройства>' -v /etc/hosts:/etc/hosts novatellogreader:latest
    ```
