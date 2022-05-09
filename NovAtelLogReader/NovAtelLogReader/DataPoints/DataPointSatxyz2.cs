@@ -4,6 +4,57 @@ using System.Runtime.Serialization;
 
 namespace NovAtelLogReader.DataPoints
 {
+    /*
+     *
+     *
+     * {
+     *   "name": "NovAtelLogReader.DataPoints.DataPointSatxyz2",
+     *   "type": "record",
+     *   "fields": [
+     *     {
+     *       "name": "NavigationSystem",
+     *       "type": {
+     *         "name": "NovAtelLogReader.LogData.NavigationSystem",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "GPS",
+     *           "GLONASS",
+     *           "SBAS",
+     *           "Galileo",
+     *           "BeiDou",
+     *           "QZSS",
+     *           "Reserved",
+     *           "Other"
+     *         ]
+     *       }
+     *     },
+     *     {
+     *       "name": "Prn",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
+     *       "name": "Timestamp",
+     *       "type": "long"
+     *     },
+     *     {
+     *       "name": "X",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Y",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Z",
+     *       "type": "double"
+     *     }
+     *   ]
+     * }
+     * */
     [DataContract]
     [Serializable]
     [DataPoint(Name = "SATXYZ2", Queue = "datapoint-raw-satxyz2")]

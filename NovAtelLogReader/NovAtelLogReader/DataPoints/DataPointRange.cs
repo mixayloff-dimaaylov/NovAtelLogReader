@@ -4,6 +4,87 @@ using NovAtelLogReader.LogData;
 
 namespace NovAtelLogReader.DataPoints
 {
+    /*
+     *
+     *
+     * {
+     *   "name": "NovAtelLogReader.DataPoints.DataPointRange",
+     *   "type": "record",
+     *   "fields": [
+     *     {
+     *       "name": "Adr",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "CNo",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "GloFreq",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "LockTime",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "NavigationSystem",
+     *       "type": {
+     *         "name": "NovAtelLogReader.LogData.NavigationSystem",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "GPS",
+     *           "GLONASS",
+     *           "SBAS",
+     *           "Galileo",
+     *           "BeiDou",
+     *           "QZSS",
+     *           "Reserved",
+     *           "Other"
+     *         ]
+     *       }
+     *     },
+     *     {
+     *       "name": "Power",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Prn",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "Psr",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
+     *       "name": "SignalType",
+     *       "type": {
+     *         "name": "NovAtelLogReader.LogData.SignalType",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "Unknown",
+     *           "L1CA",
+     *           "L2C",
+     *           "L2CA",
+     *           "L2P",
+     *           "L2P_codeless",
+     *           "L2Y",
+     *           "L5Q"
+     *         ]
+     *       }
+     *     },
+     *     {
+     *       "name": "Timestamp",
+     *       "type": "long"
+     *     }
+     *   ]
+     * }
+     *
+     * */
     [DataContract]
     [Serializable]
     [DataPoint(Name = "RANGE", Queue = "datapoint-raw-range")]
