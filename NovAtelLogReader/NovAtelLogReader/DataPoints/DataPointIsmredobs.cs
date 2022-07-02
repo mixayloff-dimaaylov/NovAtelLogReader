@@ -4,6 +4,93 @@ using System.Runtime.Serialization;
 
 namespace NovAtelLogReader.DataPoints
 {
+    /*
+     *
+     * {
+     *   "name": "NovAtelLogReader.DataPoints.DataPointIsmredobs",
+     *   "type": "record",
+     *   "fields": [
+     *     {
+     *       "name": "AverageCmc",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "CmcStdDev",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "CorrS4",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "GloFreq",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "NavigationSystem",
+     *       "type": {
+     *         "name": "NovAtelLogReader.LogData.NavigationSystem",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "GPS",
+     *           "GLONASS",
+     *           "SBAS",
+     *           "Galileo",
+     *           "BeiDou",
+     *           "QZSS",
+     *           "Reserved",
+     *           "Other"
+     *         ]
+     *       }
+     *     },
+     *     {
+     *       "name": "PhaseSigma1Second",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "PhaseSigma30Second",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "PhaseSigma60Second",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Prn",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
+     *       "name": "SignalType",
+     *       "type": {
+     *         "name": "NovAtelLogReader.LogData.SignalType",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "Unknown",
+     *           "L1CA",
+     *           "L2C",
+     *           "L2CA",
+     *           "L2P",
+     *           "L2P_codeless",
+     *           "L2Y",
+     *           "L5Q"
+     *         ]
+     *       }
+     *     },
+     *     {
+     *       "name": "Timestamp",
+     *       "type": "long"
+     *     },
+     *     {
+     *       "name": "TotalS4",
+     *       "type": "double"
+     *     }
+     *   ]
+     * }
+     * */
     [DataContract]
     [Serializable]
     [DataPoint(Name = "ISMREDOBS", Queue = "datapoint-raw-ismredobs")]

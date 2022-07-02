@@ -3,6 +3,43 @@ using System.Runtime.Serialization;
 
 namespace NovAtelLogReader.DataPoints
 {
+    /*
+     *
+     * {
+     *   "name": "NovAtelLogReader.DataPoints.DataPointPsrpos",
+     *   "type": "record",
+     *   "fields": [
+     *     {
+     *       "name": "Hgt",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "HgtStdDev",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Lat",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "LatStdDev",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Lon",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "LonStdDev",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Timestamp",
+     *       "type": "long"
+     *     }
+     *   ]
+     * }
+     * */
     [DataContract]
     [Serializable]
     [DataPoint(Name = "PSRPOS", Queue = "datapoint-raw-psrpos")]
