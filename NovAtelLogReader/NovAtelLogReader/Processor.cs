@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NovAtelLogReader.DataPoints;
@@ -85,7 +86,7 @@ namespace NovAtelLogReader
                 try { _publisher.Close(); } catch (Exception) { }
             }
         }
-        
+
         private void ProcessMessage(byte[] message)
         {
             var record = _logRecordFormat.ExtrcatLogRecord(message);
@@ -112,24 +113,267 @@ namespace NovAtelLogReader
             }
 
             _messageCounter = _reader.MessageCounter;
+            lock (_locker)
+            {
+                InterpolateDataPoints();
+            }
 
             foreach (var queue in _logQueues)
             {
                 lock (_locker)
                 {
-                    if (queue.Value.Count > 0)
+                    if (queue.Value.Count > 1)
                     {
+                        // drop last element from previous itteration to don't send it again.
+                        if (queue.Key == "SATXYZ2")
+                        {
+                            DropFirstDataPoint();
+                        }
+
                         _logger.Info("Отправка {0} точек по логу {1}", queue.Value.Count, queue.Key);
                         _publisher.Publish(_logTypes[queue.Key], queue.Value);
-                        queue.Value.Clear();
+
+                        // keep last element for interpolation
+                        if (queue.Key != "SATXYZ2")
+                        {
+                            queue.Value.Clear();
+                        }
+                        else
+                        {
+                            DropLastDataPoints();
+                        }
                     }
                 }
             }
+        }
+
+        private void InterpolateDataPoints()
+        {
+            var queue = _logQueues["SATXYZ2"];
+            var acc = new List<object>();
+
+            _logger.Debug("Интерполяция {0} точек по логу {1}", queue.Count, "SATXYZ2");
+
+            foreach (var sat in queue.GroupBy(x => ((DataPointSatxyz2) x).Satellite))
+            {
+                // Check, if there are all satellites with at least 2 datapoints.
+                // Interpolation with 1-lenght list gives empty list!
+                if (sat.Count() < 2)
+                {
+                    acc.AddRange(sat);
+                    continue;
+                }
+
+                var min = sat
+                    .Select(x => ((DataPointSatxyz2) x).Timestamp).Min();
+                var max = sat
+                    .Select(x => ((DataPointSatxyz2) x).Timestamp).Max();
+
+                var interpolated = sat.Resample(
+                    min, max, 20,
+                    data => ((DataPointSatxyz2) data).Timestamp,
+                    (time, data1, data2, t) => {
+                        var X = ResampleExt.Lerp(((DataPointSatxyz2) data1).X, ((DataPointSatxyz2) data2).X, t);
+                        var Y = ResampleExt.Lerp(((DataPointSatxyz2) data1).Y, ((DataPointSatxyz2) data2).Y, t);
+                        var Z = ResampleExt.Lerp(((DataPointSatxyz2) data1).Z, ((DataPointSatxyz2) data2).Z, t);
+
+                        var res = (object) new DataPointSatxyz2
+                        {
+                            // The date is already interpolated for us.
+                            Timestamp =        time,
+                            NavigationSystem = ((DataPointSatxyz2) data1).NavigationSystem,
+                            Prn =              ((DataPointSatxyz2) data1).Prn,
+                            Satellite =        ((DataPointSatxyz2) data1).Satellite,
+
+                            // We must interpolate, just doing a simple linear interpolation here.
+                            X = X,
+                            Y = Y,
+                            Z = Z
+                        };
+
+                        // Here we instantiate and return an output (resampled) data point.
+                        return res;
+                    }
+                ).ToList();
+
+                _logger.Debug("Интерполировано {0} точек.", interpolated.Count());
+                acc.AddRange(interpolated);
+            }
+
+            _logger.Debug("Всего: [{0}]", acc.Count());
+            _logQueues["SATXYZ2"].Clear();
+            _logQueues["SATXYZ2"].AddRange(acc);
+            _logger.Debug("Всего в SATXYZ2: [{0}]", _logQueues["SATXYZ2"].Count());
+        }
+
+        private void DropFirstDataPoint()
+        {
+            var acc = new List<object>();
+
+            foreach (var sat in _logQueues["SATXYZ2"]
+                                   .GroupBy(x => ((DataPointSatxyz2) x).Satellite))
+            {
+                if (sat.Count() < 2)
+                {
+                    acc.AddRange(sat);
+                    continue;
+                }
+
+                acc.AddRange(sat.Skip(1));
+            }
+
+            _logQueues["SATXYZ2"].Clear();
+            _logQueues["SATXYZ2"].AddRange(acc);
+        }
+
+        private void DropLastDataPoints()
+        {
+            var acc = new List<object>();
+
+            foreach (var sat in _logQueues["SATXYZ2"]
+                                   .GroupBy(x => ((DataPointSatxyz2) x).Satellite))
+            {
+                if (sat.Count() < 2)
+                {
+                    acc.AddRange(sat);
+                    continue;
+                }
+
+                acc.AddRange(sat.Skip(sat.Count() - 1));
+            }
+
+            _logQueues["SATXYZ2"].Clear();
+            _logQueues["SATXYZ2"].AddRange(acc);
         }
 
         public void Dispose()
         {
             _timer.Dispose();
         }
+    }
+}
+
+// Ref: https://www.codeproject.com/Tips/760099/Resampling-and-merging-time-series-data-using-LINQ
+// The function is an extension method, so it must be defined in a static class.
+public static class ResampleExt
+{
+    // Resample an input time series and create a new time series between two
+    // particular dates sampled at a specified time interval.
+    public static IEnumerable<OutputDataT> Resample<InputValueT, OutputDataT>(
+
+        // Input time series to be resampled.
+        this IEnumerable<InputValueT> source,
+
+        // Start date of the new time series.
+        long startDate,
+
+        // Date at which the new time series will have ended.
+        long endDate,
+
+        // The time interval between samples.
+        long resampleInterval,
+
+        // Function that selects a date/time value from an input data point.
+        Func<InputValueT, long> dateSelector,
+
+        // Interpolation function that produces a new interpolated data point
+        // at a particular time between two input data points.
+        Func<long, InputValueT, InputValueT, double, OutputDataT> interpolator
+    )
+    {
+        // ... argument checking omitted ...
+
+        //
+        // Manually enumerate the input time series...
+        // This is manual because the first data point must be treated specially.
+        //
+        var e = source.GetEnumerator();
+        if (e.MoveNext())
+        {
+            // Initialize working date to the start date, this variable will be used to
+            // walk forward in time towards the end date.
+            var workingDate = startDate;
+
+            // Extract the first data point from the input time series.
+            var firstDataPoint = e.Current;
+
+            // Extract the first data point's date using the date selector.
+            var firstDate = dateSelector(firstDataPoint);
+
+            // Loop forward in time until we reach either the date of the first
+            // data point or the end date, which ever comes first.
+            while (workingDate < endDate && workingDate <= firstDate)
+            {
+                // Until we reach the date of the first data point,
+                // use the interpolation function to generate an output
+                // data point from the first data point.
+                yield return interpolator(workingDate, firstDataPoint, firstDataPoint, 0);
+
+                // Walk forward in time by the specified time period.
+                workingDate += resampleInterval;
+            }
+
+            //
+            // Setup current data point... we will now loop over input data points and
+            // interpolate between the current and next data points.
+            //
+            var curDataPoint = firstDataPoint;
+            var curDate = firstDate;
+
+            //
+            // After we have reached the first data point, loop over remaining input data points until
+            // either the input data points have been exhausted or we have reached the end date.
+            //
+            while (workingDate < endDate && e.MoveNext())
+            {
+                // Extract the next data point from the input time series.
+                var nextDataPoint = e.Current;
+
+                // Extract the next data point's date using the data selector.
+                var nextDate = dateSelector(nextDataPoint);
+
+                // Calculate the time span between the dates of the current and next data points.
+                var timeSpan = nextDate - firstDate;
+
+                // Loop forward in time until wwe have moved beyond the date of the next data point.
+                while (workingDate <= endDate && workingDate < nextDate)
+                {
+                    // The time span from the current date to the working date.
+                    var curTimeSpan = workingDate - curDate;
+
+                    // The time between the dates as a percentage (a 0-1 value).
+                    var timePct = ((double) curTimeSpan) / ((double) timeSpan);
+
+                    // Interpolate an output data point at the particular time between
+                    // the current and next data points.
+                    yield return interpolator(workingDate, curDataPoint, nextDataPoint, timePct);
+
+                    // Walk forward in time by the specified time period.
+                    workingDate += resampleInterval;
+                }
+
+                // Swap the next data point into the current data point so we can move on and continue
+                // the interpolation with each subsqeuent data point assuming the role of
+                // 'next data point' in the next iteration of this loop.
+                curDataPoint = nextDataPoint;
+                curDate = nextDate;
+            }
+
+            // Finally loop forward in time until we reach the end date.
+            while (workingDate < endDate)
+            {
+                // Interpolate an output data point generated from the last data point.
+                yield return interpolator(workingDate, curDataPoint, curDataPoint, 1);
+
+                // Walk forward in time by the specified time period.
+                workingDate += resampleInterval;
+            }
+        }
+    }
+
+    // The linear interpolation is defined as follows.
+    public static double Lerp(double v1, double v2, double t)
+    {
+        return v1 + ((v2 - v1) * t);
     }
 }
