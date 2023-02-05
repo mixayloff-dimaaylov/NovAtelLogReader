@@ -43,6 +43,14 @@ namespace NovAtelLogReader
         private Dictionary<String, IListConverter> _logListConverters = new Dictionary<String, IListConverter>();
         private Dictionary<String, List<object>> _logQueues = new Dictionary<string, List<object>>();
 
+        /*
+         * For SATXYZ2 interpolation
+         * Grouped by sigcomb
+         *
+         * TODO: rewrite to standalone class
+         */
+        private Dictionary<String, DataPointSatxyz2> satxyz2lastSeenPoints = new Dictionary<String, DataPointSatxyz2>();
+
         public event EventHandler<ErrorEventArgs> UnrecoverableError;
 
         public Processor(IReader reader, IPublisher publisher, ILogRecordFormat logRecordFormat)
@@ -131,57 +139,105 @@ namespace NovAtelLogReader
             _messageCounter = _reader.MessageCounter;
             lock (_locker)
             {
-                InterpolateDataPoints();
+                Func<DataPointSatxyz2, long> timestampGetter =
+                    (x) => x.Timestamp;
+                Func<DataPointSatxyz2, string> groupByFunc =
+                    (x) => x.Satellite;
+                Func<long, DataPointSatxyz2, DataPointSatxyz2, double, DataPointSatxyz2> interpolatorFunc =
+                    (time, data1, data2, t) => {
+                        var X = ResampleExt.Lerp(data1.X, data2.X, t);
+                        var Y = ResampleExt.Lerp(data1.Y, data2.Y, t);
+                        var Z = ResampleExt.Lerp(data1.Z, data2.Z, t);
+
+                        var res = new DataPointSatxyz2
+                        {
+                            // The date is already interpolated for us.
+                            Timestamp =        time,
+                            NavigationSystem = data1.NavigationSystem,
+                            Prn =              data1.Prn,
+                            Satellite =        data1.Satellite,
+
+                            // We must interpolate, just doing a simple linear interpolation here.
+                            X = X,
+                            Y = Y,
+                            Z = Z
+                        };
+
+                        // Here we instantiate and return an output (resampled) data point.
+                        return res;
+                    };
+
+                InterpolateSATXYZ2<DataPointSatxyz2>(
+                    timestampGetter, groupByFunc, interpolatorFunc
+                );
             }
 
             foreach (var queue in _logQueues)
             {
                 lock (_locker)
                 {
-                    if (queue.Value.Count > 0)
-                    {
-                        _logger.Info("Отправка {0} точек по логу {1}", queue.Value.Count, queue.Key);
-                        _publisher.Publish(_logTypes[queue.Key], queue.Value);
-                        queue.Value.Clear();
-                    }
+                    _logger.Info("Отправка {0} точек по логу {1}", queue.Value.Count, queue.Key);
+                    _publisher.Publish(_logTypes[queue.Key], queue.Value);
+                    queue.Value.Clear();
                 }
             }
         }
 
-        private void InterpolateDataPoints()
+        /*
+         * For SATXYZ2 interpolation
+         */
+        private void InterpolateSATXYZ2<T>(
+            Func<T, long> timestampGetter,
+            Func<T, string> groupByFunc,
+            Func<long, T, T, double, T> interpolatorFunc
+        )
         {
             var queue = _logQueues["SATXYZ2"];
-            var acc = new List<object>();
+            var acc = new List<T>();
 
-            foreach (var sat in queue.GroupBy(x => ((DataPointSatxyz2) x).Satellite))
+            _logger.Info("Интерполяция {0} точек по логу SATXYZ2", queue.Count);
+
+            foreach (var sat in queue.Cast<T>().GroupBy(groupByFunc))
             {
-                var min = sat
-                    .Select(x => ((DataPointSatxyz2) x).Timestamp).Min();
-                var max = sat
-                    .Select(x => ((DataPointSatxyz2) x).Timestamp).Max();
+                var max = timestampGetter(sat.Last());
 
-                acc.AddRange((List<object>) sat.Resample(
-                    min, max, 20,
-                    data => ((DataPointSatxyz2) data).Timestamp,
-                    (time, data1, data2, t) =>
-                    // Here we instantiate and return an output (resampled) data point.
-                    (object) new DataPointSatxyz2
-                    {
-                        // The date is already interpolated for us.
-                        Timestamp =        ((DataPointSatxyz2) data1).Timestamp,
-                        NavigationSystem = ((DataPointSatxyz2) data1).NavigationSystem,
-                        Prn =              ((DataPointSatxyz2) data1).Prn,
-                        Satellite =        ((DataPointSatxyz2) data1).Satellite,
+                object lastSeen;
+                try {
+                    lastSeen = satxyz2lastSeenPoints[sat.Key];
+                }
+                // If no data, cannot interpolate. For next try
+                catch (KeyNotFoundException) {
+                    satxyz2lastSeenPoints.Remove(sat.Key);
+                    satxyz2lastSeenPoints.Add(sat.Key, (DataPointSatxyz2) sat.Cast<object>().Last());
+                    acc.AddRange(sat);
+                    continue;
+                }
 
-                        // We must interpolate, just doing a simple linear interpolation here.
-                        X = ResampleExt.Lerp(((DataPointSatxyz2) data1).X, ((DataPointSatxyz2) data2).X, t),
-                        Y = ResampleExt.Lerp(((DataPointSatxyz2) data1).Y, ((DataPointSatxyz2) data2).Y, t),
-                        Z = ResampleExt.Lerp(((DataPointSatxyz2) data1).Z, ((DataPointSatxyz2) data2).Z, t)
-                    }
-                ));
+                // Reset if cycle slip occured (period = 10 seconds)
+                if ((max - timestampGetter((T) lastSeen)) > 20000)
+                {
+                    satxyz2lastSeenPoints.Remove(sat.Key);
+                    satxyz2lastSeenPoints.Add(sat.Key, (DataPointSatxyz2) sat.Cast<object>().Last());
+                    acc.AddRange(sat);
+                    continue;
+                }
+
+                var prepended = sat.Prepend((T) lastSeen);
+                var min = timestampGetter(prepended.First());
+
+                var interpolated = prepended.Resample(
+                    min, max, 20, timestampGetter, interpolatorFunc
+                );
+
+                satxyz2lastSeenPoints[sat.Key] = interpolated.Cast<DataPointSatxyz2>().Last();
+
+                acc.AddRange(interpolated.Skip(1)); // was sent in previous itteration
             }
 
-            _logQueues["SATXYZ2"] = acc;
+            _logger.Info("Total: [{0}]", acc.Count());
+            _logQueues["SATXYZ2"].Clear();
+            _logQueues["SATXYZ2"].AddRange(acc.Cast<object>());
+            _logger.Info("Total in queue: [{0}]", _logQueues["SATXYZ2"].Count());
         }
 
         public void Dispose()
@@ -279,7 +335,7 @@ public static class ResampleExt
                     var curTimeSpan = workingDate - curDate;
 
                     // The time between the dates as a percentage (a 0-1 value).
-                    var timePct = curTimeSpan / timeSpan;
+                    var timePct = ((double) curTimeSpan) / ((double) timeSpan);
 
                     // Interpolate an output data point at the particular time between
                     // the current and next data points.
