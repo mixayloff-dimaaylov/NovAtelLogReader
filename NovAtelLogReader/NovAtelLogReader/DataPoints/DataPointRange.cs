@@ -6,26 +6,13 @@ namespace NovAtelLogReader.DataPoints
 {
     /*
      *
-     *
      * {
      *   "name": "NovAtelLogReader.DataPoints.DataPointRange",
      *   "type": "record",
      *   "fields": [
      *     {
-     *       "name": "Adr",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "CNo",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "GloFreq",
-     *       "type": "int"
-     *     },
-     *     {
-     *       "name": "LockTime",
-     *       "type": "double"
+     *       "name": "Timestamp",
+     *       "type": "long"
      *     },
      *     {
      *       "name": "NavigationSystem",
@@ -45,22 +32,6 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
-     *       "name": "Power",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "Prn",
-     *       "type": "int"
-     *     },
-     *     {
-     *       "name": "Psr",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "Satellite",
-     *       "type": "string"
-     *     },
-     *     {
      *       "name": "SignalType",
      *       "type": {
      *         "name": "NovAtelLogReader.LogData.SignalType",
@@ -78,13 +49,42 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
-     *       "name": "Timestamp",
-     *       "type": "long"
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
+     *       "name": "Prn",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "GloFreq",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "Psr",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Adr",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "CNo",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "LockTime",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Power",
+     *       "type": "double"
      *     }
      *   ]
      * }
      *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "RANGE", Queue = "datapoint-raw-range")]

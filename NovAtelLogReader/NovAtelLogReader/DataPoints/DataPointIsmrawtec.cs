@@ -11,8 +11,8 @@ namespace NovAtelLogReader.DataPoints
      *   "type": "record",
      *   "fields": [
      *     {
-     *       "name": "GloFreq",
-     *       "type": "int"
+     *       "name": "Timestamp",
+     *       "type": "long"
      *     },
      *     {
      *       "name": "NavigationSystem",
@@ -32,6 +32,18 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
+     *       "name": "Prn",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "GloFreq",
+     *       "type": "int"
+     *     },
+     *     {
      *       "name": "PrimarySignal",
      *       "type": {
      *         "name": "NovAtelLogReader.LogData.SignalType",
@@ -49,29 +61,18 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
-     *       "name": "Prn",
-     *       "type": "int"
-     *     },
-     *     {
-     *       "name": "Satellite",
-     *       "type": "string"
-     *     },
-     *     {
      *       "name": "SecondarySignal",
      *       "type": "NovAtelLogReader.LogData.SignalType"
      *     },
      *     {
      *       "name": "Tec",
      *       "type": "double"
-     *     },
-     *     {
-     *       "name": "Timestamp",
-     *       "type": "long"
      *     }
      *   ]
      * }
      *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "ISMRAWTEC", Queue = "datapoint-raw-ismrawtec")]

@@ -4,7 +4,6 @@ using System.Runtime.Serialization;
 
 namespace NovAtelLogReader.DataPoints
 {
-
     /*
      *
      * {
@@ -12,63 +11,64 @@ namespace NovAtelLogReader.DataPoints
      *   "type": "record",
      *   "fields": [
      *     {
-     *       "name": "GloFreq",
-     *       "type": "int"
+     *       "name": "Timestamp",
+     *       "type": "long"
      *     },
      *     {
      *       "name": "NavigationSystem",
      *       "type": {
-     * 	"name": "NovAtelLogReader.LogData.NavigationSystem",
-     * 	"type": "enum",
-     * 	"symbols": [
-     * 	  "GPS",
-     * 	  "GLONASS",
-     * 	  "SBAS",
-     * 	  "Galileo",
-     * 	  "BeiDou",
-     * 	  "QZSS",
-     * 	  "Reserved",
-     * 	  "Other"
-     * 	]
+     *         "name": "NovAtelLogReader.LogData.NavigationSystem",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "GPS",
+     *           "GLONASS",
+     *           "SBAS",
+     *           "Galileo",
+     *           "BeiDou",
+     *           "QZSS",
+     *           "Reserved",
+     *           "Other"
+     *         ]
      *       }
      *     },
      *     {
-     *       "name": "Power",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "Prn",
-     *       "type": "int"
+     *       "name": "SignalType",
+     *       "type": {
+     *         "name": "NovAtelLogReader.LogData.SignalType",
+     *         "type": "enum",
+     *         "symbols": [
+     *           "Unknown",
+     *           "L1CA",
+     *           "L2C",
+     *           "L2CA",
+     *           "L2P",
+     *           "L2P_codeless",
+     *           "L2Y",
+     *           "L5Q"
+     *         ]
+     *       }
      *     },
      *     {
      *       "name": "Satellite",
      *       "type": "string"
      *     },
      *     {
-     *       "name": "SignalType",
-     *       "type": {
-     * 	"name": "NovAtelLogReader.LogData.SignalType",
-     * 	"type": "enum",
-     * 	"symbols": [
-     * 	  "Unknown",
-     * 	  "L1CA",
-     * 	  "L2C",
-     * 	  "L2CA",
-     * 	  "L2P",
-     * 	  "L2P_codeless",
-     * 	  "L2Y",
-     * 	  "L5Q"
-     * 	]
-     *       }
+     *       "name": "Prn",
+     *       "type": "int"
      *     },
      *     {
-     *       "name": "Timestamp",
-     *       "type": "long"
+     *       "name": "GloFreq",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "Power",
+     *       "type": "double"
      *     }
      *   ]
      * }
      *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "ISMDETOBS", Queue = "datapoint-raw-ismdetobs")]

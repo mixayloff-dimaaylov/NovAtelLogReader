@@ -11,19 +11,7 @@ namespace NovAtelLogReader.DataPoints
      *   "type": "record",
      *   "fields": [
      *     {
-     *       "name": "Az",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "Elev",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "GloFreq",
-     *       "type": "int"
-     *     },
-     *     {
-     *       "name": "Health",
+     *       "name": "Timestamp",
      *       "type": "long"
      *     },
      *     {
@@ -44,25 +32,38 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
      *       "name": "Prn",
      *       "type": "int"
      *     },
      *     {
-     *       "name": "Satellite",
-     *       "type": "string"
+     *       "name": "GloFreq",
+     *       "type": "int"
      *     },
      *     {
      *       "name": "SatVis",
      *       "type": "boolean"
      *     },
      *     {
-     *       "name": "Timestamp",
+     *       "name": "Health",
      *       "type": "long"
+     *     },
+     *     {
+     *       "name": "Elev",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "Az",
+     *       "type": "double"
      *     }
      *   ]
      * }
      *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "SATVIS", Queue = "datapoint-raw-satvis")]
