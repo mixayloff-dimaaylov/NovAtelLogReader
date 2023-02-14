@@ -11,20 +11,8 @@ namespace NovAtelLogReader.DataPoints
      *   "type": "record",
      *   "fields": [
      *     {
-     *       "name": "AverageCmc",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "CmcStdDev",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "CorrS4",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "GloFreq",
-     *       "type": "int"
+     *       "name": "Timestamp",
+     *       "type": "long"
      *     },
      *     {
      *       "name": "NavigationSystem",
@@ -44,26 +32,6 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
-     *       "name": "PhaseSigma1Second",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "PhaseSigma30Second",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "PhaseSigma60Second",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "Prn",
-     *       "type": "int"
-     *     },
-     *     {
-     *       "name": "Satellite",
-     *       "type": "string"
-     *     },
-     *     {
      *       "name": "SignalType",
      *       "type": {
      *         "name": "NovAtelLogReader.LogData.SignalType",
@@ -81,16 +49,50 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
-     *       "name": "Timestamp",
-     *       "type": "long"
+     *       "name": "Satellite",
+     *       "type": "string"
+     *     },
+     *     {
+     *       "name": "Prn",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "GloFreq",
+     *       "type": "int"
+     *     },
+     *     {
+     *       "name": "AverageCmc",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "CmcStdDev",
+     *       "type": "double"
      *     },
      *     {
      *       "name": "TotalS4",
      *       "type": "double"
+     *     },
+     *     {
+     *       "name": "CorrS4",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "PhaseSigma1Second",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "PhaseSigma30Second",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "PhaseSigma60Second",
+     *       "type": "double"
      *     }
      *   ]
      * }
+     *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "ISMREDOBS", Queue = "datapoint-raw-ismredobs")]

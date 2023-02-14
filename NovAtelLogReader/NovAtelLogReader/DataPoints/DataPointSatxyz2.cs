@@ -6,11 +6,14 @@ namespace NovAtelLogReader.DataPoints
 {
     /*
      *
-     *
      * {
      *   "name": "NovAtelLogReader.DataPoints.DataPointSatxyz2",
      *   "type": "record",
      *   "fields": [
+     *     {
+     *       "name": "Timestamp",
+     *       "type": "long"
+     *     },
      *     {
      *       "name": "NavigationSystem",
      *       "type": {
@@ -29,16 +32,12 @@ namespace NovAtelLogReader.DataPoints
      *       }
      *     },
      *     {
-     *       "name": "Prn",
-     *       "type": "int"
-     *     },
-     *     {
      *       "name": "Satellite",
      *       "type": "string"
      *     },
      *     {
-     *       "name": "Timestamp",
-     *       "type": "long"
+     *       "name": "Prn",
+     *       "type": "int"
      *     },
      *     {
      *       "name": "X",
@@ -54,7 +53,9 @@ namespace NovAtelLogReader.DataPoints
      *     }
      *   ]
      * }
+     *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "SATXYZ2", Queue = "datapoint-raw-satxyz2")]

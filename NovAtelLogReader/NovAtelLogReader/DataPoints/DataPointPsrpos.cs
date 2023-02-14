@@ -10,19 +10,11 @@ namespace NovAtelLogReader.DataPoints
      *   "type": "record",
      *   "fields": [
      *     {
-     *       "name": "Hgt",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "HgtStdDev",
-     *       "type": "double"
+     *       "name": "Timestamp",
+     *       "type": "long"
      *     },
      *     {
      *       "name": "Lat",
-     *       "type": "double"
-     *     },
-     *     {
-     *       "name": "LatStdDev",
      *       "type": "double"
      *     },
      *     {
@@ -30,16 +22,26 @@ namespace NovAtelLogReader.DataPoints
      *       "type": "double"
      *     },
      *     {
+     *       "name": "Hgt",
+     *       "type": "double"
+     *     },
+     *     {
+     *       "name": "LatStdDev",
+     *       "type": "double"
+     *     },
+     *     {
      *       "name": "LonStdDev",
      *       "type": "double"
      *     },
      *     {
-     *       "name": "Timestamp",
-     *       "type": "long"
+     *       "name": "HgtStdDev",
+     *       "type": "double"
      *     }
      *   ]
      * }
+     *
      * */
+
     [DataContract]
     [Serializable]
     [DataPoint(Name = "PSRPOS", Queue = "datapoint-raw-psrpos")]
