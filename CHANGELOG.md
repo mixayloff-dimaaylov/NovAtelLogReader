@@ -1,6 +1,6 @@
 # Change Log
 
-## _unreleased_
+## [0.3.0] - 2023-04-29
 
 ### Changed
 
@@ -61,5 +61,6 @@
 - Реализована поддержка бинарных- и ASCII- логов для приёмника NovAtel OEM6 и
   отправки их в RabbitMQ и Apache Kafka
 
+[0.3.0]: https://github.com/mixayloff-dimaaylov/NovAtelLogReader/releases/tag/0.3.0
 [0.2.0]: https://github.com/mixayloff-dimaaylov/NovAtelLogReader/releases/tag/0.2.0
 [0.1.0]: https://github.com/mixayloff-dimaaylov/NovAtelLogReader/releases/tag/0.1.0
