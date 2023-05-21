@@ -1,5 +1,18 @@
 # Change Log
 
+## _unreleased_
+
+### Changed
+
+- Теперь сообщения лога `SATXYZ2` интерполированы с частотой 50 Гц
+  ([#10](https://github.com/mixayloff-dimaaylov/NovAtelLogReader/pull/10))
+
+### Added
+
+### Fixed
+
+### Removed
+
 ## [0.3.0] - 2023-04-29
 
 ### Changed
