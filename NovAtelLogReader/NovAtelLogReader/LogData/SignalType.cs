@@ -18,13 +18,13 @@ namespace NovAtelLogReader.LogData
 {
     public enum SignalType
     {
-        Unknown,
-        L1CA,
-        L2C,
-        L2CA,
-        L2P,
-        L2P_codeless,
-        L2Y,
-        L5Q
+        Unknown = 0,
+        L1CA = 1,
+        L2C = 2,
+        L2CA = 3,
+        L2P = 4,
+        L2P_codeless = 5,
+        L2Y = 6,
+        L5Q = 7
     }
 }
